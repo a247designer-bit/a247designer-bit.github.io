@@ -1,0 +1,262 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Blookd design tokens
+
+   Two rules carry most of the look and both come from the reference:
+
+   1. One weight per family. Headings are JeanLuc bold, body is Manrope at 500.
+      Emphasis comes from SIZE and from the opacity ramp below — never from
+      switching to a heavier cut. Reach for --text-* and the ink ramp instead
+      of font-bold.
+   2. One tracking value. Everything sits at -0.02em; only display sizes go
+      tighter. Optical, not arbitrary: it is what makes the type read as
+      deliberate rather than default.
+
+   Secondary text is the foreground at reduced alpha rather than a separate
+   grey, so it stays correct on every band. 62% is the floor for ANY text: it
+   is the lowest alpha that still clears 4.5:1 on paper. The steps below it
+   (--color-ink-40 and down) reach only 2.5:1, which fails even the 3:1 large
+   text threshold — they are for rules, borders and fills, never for type.
+   --------------------------------------------------------------------------- */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-display);
+  --font-display: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Brand — the orange is the only saturated colour on the site. */
+  --color-brand: var(--brand);
+  --color-brand-hi: var(--brand-hi);
+
+  /* Bands. Sections are flat colour blocks stacked with rounded top corners. */
+  --color-paper: var(--paper);
+  --color-quiet: var(--quiet);
+  --color-ink: var(--ink);
+
+  /* Ink ramp — secondary text as alpha of the foreground. */
+  --color-ink-70: color-mix(in oklab, var(--foreground) 70%, transparent);
+  --color-ink-62: color-mix(in oklab, var(--foreground) 62%, transparent);
+  --color-ink-40: color-mix(in oklab, var(--foreground) 40%, transparent);
+  --color-ink-12: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --color-ink-06: color-mix(in oklab, var(--foreground) 6%, transparent);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-band: 32px;
+
+  /* Type scale. Display sizes are fluid; body sizes are not, so measure and
+     rhythm stay stable across breakpoints. */
+  --text-display-1: clamp(2.75rem, 6vw, 6rem);
+  --text-display-1--line-height: 0.98;
+  --text-display-1--letter-spacing: -0.035em;
+  --text-display-2: clamp(2.125rem, 4.2vw, 4rem);
+  --text-display-2--line-height: 1.04;
+  --text-display-2--letter-spacing: -0.03em;
+  --text-display-3: clamp(1.5rem, 2.4vw, 2.25rem);
+  --text-display-3--line-height: 1.1;
+  --text-display-3--letter-spacing: -0.025em;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  /* Blookd greys, unchanged from the built site. */
+  --paper: #fdfdfd;
+  --quiet: #f2f2f2;
+  --ink: #1a1a1a;
+
+  --brand: #dc4b14;
+  --brand-hi: #f06530;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+
+  /* The primary action on this site is the orange CTA. */
+  --primary: var(--brand);
+  --primary-foreground: #fdfdfd;
+  --secondary: var(--quiet);
+  --secondary-foreground: var(--ink);
+  --muted: var(--quiet);
+  --muted-foreground: color-mix(in oklab, var(--ink) 62%, transparent);
+  --accent: var(--quiet);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.55 0.2 25);
+  --border: color-mix(in oklab, var(--ink) 10%, transparent);
+  --input: color-mix(in oklab, var(--ink) 14%, transparent);
+  --ring: var(--brand);
+
+  --chart-1: var(--brand);
+  --chart-2: #2b3440;
+  --chart-3: #6a6a6a;
+  --chart-4: #a8a8a8;
+  --chart-5: #d4d4d4;
+
+  --radius: 0.75rem;
+
+  --sidebar: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: #fdfdfd;
+  --sidebar-accent: var(--quiet);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: color-mix(in oklab, var(--ink) 10%, transparent);
+  --sidebar-ring: var(--brand);
+}
+
+/* Dark is not a user-facing theme switch here — it is the palette the dark
+   bands run on, applied per section by <Band tone="dark">. */
+.dark {
+  --paper: #1a1a1a;
+  --quiet: #242424;
+  --ink: #fafafa;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #242424;
+  --card-foreground: var(--ink);
+  --popover: #242424;
+  --popover-foreground: var(--ink);
+
+  --primary: var(--brand-hi);
+  --primary-foreground: #1a1a1a;
+  --secondary: color-mix(in oklab, var(--ink) 10%, transparent);
+  --secondary-foreground: var(--ink);
+  --muted: color-mix(in oklab, var(--ink) 8%, transparent);
+  --muted-foreground: color-mix(in oklab, var(--ink) 62%, transparent);
+  --accent: color-mix(in oklab, var(--ink) 10%, transparent);
+  --accent-foreground: var(--ink);
+  --border: color-mix(in oklab, var(--ink) 14%, transparent);
+  --input: color-mix(in oklab, var(--ink) 18%, transparent);
+  --ring: var(--brand-hi);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    /* Every size steps down from this; see the note at the top of the file. */
+    letter-spacing: -0.02em;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Lenis owns the scroll position; this keeps anchor jumps from fighting it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  /* Paired with <Reveal>. The element ships visible; the script opts it into
+     the hidden state, so no-JS and reduced-motion readers keep the content. */
+  [data-reveal] {
+    transition:
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="pending"] {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  [data-reveal="shown"] {
+    opacity: 1;
+    transform: none;
+  }
+
+
+  /* The page grid: content sits on a 1160 column, bands run full width. */
+  .container-site {
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .container-site {
+      padding-inline: 40px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

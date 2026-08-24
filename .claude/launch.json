@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "blookd-legacy-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/aleksandrtrelin/Downloads/seven-wireframes-with-grayscale-copy/.claude/static-server.mjs"
+      ],
+      "port": 8123,
+      "autoPort": true
+    },
+    {
+      "name": "blookd-next",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}
