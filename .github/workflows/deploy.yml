@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you redeploy by hand from the Actions tab without pushing a commit.
+  workflow_dispatch:
+
+# deploy-pages authenticates via OIDC rather than a stored token, so it needs
+# id-token alongside the Pages write scope.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# A queued deploy should supersede an in-flight one rather than race it, but
+# never cancel a run that is already publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # ci, not install: build from the committed lockfile so a deploy can
+      # never pick up a different dependency tree than the one tested locally.
+      - run: npm ci
+
+      - run: npm run build
+
+      # next.config.ts sets output: "export", so the build writes out/.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
