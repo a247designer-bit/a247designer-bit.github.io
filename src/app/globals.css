@@ -28,7 +28,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
   --font-heading: var(--font-display);
   --font-display: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -234,6 +233,47 @@
     transform: none;
   }
 
+  /* The showcase rail. Both rules read --wipe, the step's own scroll progress,
+     written per frame by <AppShowcase>, and both rest at their unstarted state
+     when the script never runs.
+
+     They reach for --primary rather than --brand because it is the band-aware
+     orange: the brand on the light bands, the lighter brand-hi on the dark
+     ones. So the rail needs no per-tone class of its own. */
+  .rail-fill {
+    background-color: var(--primary);
+    /* Two passes, not one: the tight shadow keeps the 2px bar reading as a
+       solid edge, the wide one is the bloom around it. */
+    box-shadow:
+      0 0 6px color-mix(in oklab, var(--primary) 70%, transparent),
+      0 0 18px color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+
+  /* The step's title paints in from the left as its card scrolls past. The 12%
+     band between the two stops is the soft edge, so the colour sweeps across
+     the word instead of landing on it as a hard line. */
+  .rail-wipe {
+    background-image: linear-gradient(
+      90deg,
+      var(--primary) calc(var(--wipe, 0%) - 6%),
+      color-mix(in oklab, var(--foreground) 62%, transparent)
+        calc(var(--wipe, 0%) + 6%)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* The page has to close on a card, not on a cut edge. Bands only round their
+     top, which is right while they are stacking over one another — but the last
+     one has nothing below it except the footer card, so it rounds its bottom to
+     match and the quiet ground shows through at the corners and in the gap.
+     Keyed off :last-child so every page closes correctly without having to mark
+     its own final band. */
+  main > section:last-child {
+    border-end-start-radius: var(--radius-band);
+    border-end-end-radius: var(--radius-band);
+  }
 
   /* The page grid: content sits on a 1160 column, bands run full width. */
   .container-site {

@@ -99,7 +99,7 @@ export default function AboutPage() {
         </Split>
       </Band>
 
-      <Band tone="quiet" stacked aria-labelledby="future">
+      <Band tone="paper" stacked aria-labelledby="future">
         <div className="container-site">
           <Reveal className="flex max-w-[56ch] flex-col items-start gap-7">
             <Eyebrow>What&apos;s next</Eyebrow>

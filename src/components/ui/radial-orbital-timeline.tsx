@@ -40,14 +40,22 @@ interface RadialOrbitalTimelineProps {
   className?: string;
 }
 
+/** Where the nodes sit, measured from the centre of the orbit. */
+const ORBIT_RADIUS = 160;
+
 /**
- * The orbit's own footprint at scale 1: the 384px ring, plus node radius 200
- * reaching past it, plus the node dot and its label — rounded up with a
- * little slack. Below this container width the whole thing scales down
- * rather than clipping or forcing horizontal scroll.
+ * The orbit's own footprint at scale 1: the node radius, plus half a node dot
+ * reaching past it, plus the label that hangs underneath — rounded up with a
+ * little slack. Below this container width the whole thing scales down rather
+ * than clipping or forcing horizontal scroll.
+ *
+ * The radius is deliberately tighter than the ring it draws: the nodes are the
+ * point of this thing, so the footprint is spent on them rather than on empty
+ * orbit. A smaller footprint also means a larger scale on a phone, where the
+ * whole composition is shrunk to fit the column.
  */
-const NATURAL_SIZE = 480;
-const NATURAL_HEIGHT = 520;
+const NATURAL_SIZE = 450;
+const NATURAL_HEIGHT = 470;
 
 export function RadialOrbitalTimeline({
   items,
@@ -128,7 +136,7 @@ export function RadialOrbitalTimeline({
 
   const calculateNodePosition = (index: number, total: number) => {
     const angle = ((index / total) * 360 + rotationAngle) % 360;
-    const radius = 200;
+    const radius = ORBIT_RADIUS;
     const radian = (angle * Math.PI) / 180;
 
     // Rounded before they ever reach a style prop: an unrounded
@@ -180,7 +188,7 @@ export function RadialOrbitalTimeline({
           {centerMark}
         </div>
 
-        <div className="absolute size-96 rounded-full border border-white/10"></div>
+        <div className="absolute size-[304px] rounded-full border border-white/10"></div>
 
         {items.map((item, index) => {
           const position = calculateNodePosition(index, items.length);
@@ -208,20 +216,22 @@ export function RadialOrbitalTimeline({
                 toggleItem(item.id);
               }}
             >
+              {/* The halo, kept at 1.4x the dot so it reads as glow around it
+                  rather than as a second ring. */}
               <div
-                className={`absolute -inset-1 rounded-full ${isPulsing ? "animate-pulse duration-1000" : ""}`}
+                className={`absolute rounded-full ${isPulsing ? "animate-pulse duration-1000" : ""}`}
                 style={{
                   background:
                     "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)",
-                  width: "56px",
-                  height: "56px",
-                  left: "-8px",
-                  top: "-8px",
+                  width: "90px",
+                  height: "90px",
+                  left: "-13px",
+                  top: "-13px",
                 }}
               ></div>
 
               <div
-                className={`flex size-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                className={`flex size-16 items-center justify-center rounded-full border-2 transition-all duration-300 ${
                   isExpanded
                     ? "scale-150 border-white bg-white text-black shadow-lg shadow-white/30"
                     : isRelated
@@ -229,11 +239,15 @@ export function RadialOrbitalTimeline({
                       : "border-white/40 bg-black text-white"
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={26} />
               </div>
 
+              {/* Centred under the dot: left-aligned labels hung visibly off to
+                  one side once they grew to reading size. Sized to match the
+                  ecosystem sub-copy beside the orbit, and left at the project's
+                  one tracking value rather than the source's wide setting. */}
               <div
-                className={`absolute top-12 whitespace-nowrap text-xs font-semibold tracking-wider transition-all duration-300 ${
+                className={`absolute top-[72px] left-1/2 -translate-x-1/2 whitespace-nowrap text-[15px] leading-[1.5] font-medium transition-all duration-300 ${
                   isExpanded ? "scale-125 text-white" : "text-white/70"
                 }`}
               >
@@ -241,7 +255,7 @@ export function RadialOrbitalTimeline({
               </div>
 
               {isExpanded && (
-                <Card className="absolute top-20 left-1/2 w-64 -translate-x-1/2 overflow-visible border-white/30 bg-black/90 shadow-xl shadow-white/10 backdrop-blur-lg">
+                <Card className="absolute top-[112px] left-1/2 w-64 -translate-x-1/2 overflow-visible border-white/30 bg-black/90 shadow-xl shadow-white/10 backdrop-blur-lg">
                   <div className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-white/50"></div>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm text-white">{item.title}</CardTitle>

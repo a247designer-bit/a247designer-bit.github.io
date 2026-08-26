@@ -2,15 +2,16 @@
 
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { DeviceFrame } from "@/components/site/media";
+import { Placeholder } from "@/components/site/media";
 
 /**
- * A feature card that flips on hover to reveal a (shrunk) mockup placeholder
- * on the back, while the front keeps the plain title/body card look.
+ * A feature card that flips on hover to reveal the reserved slot on the back,
+ * while the front keeps the plain title/body card look.
  *
- * Both faces are absolutely positioned so they can overlap during the 3D
- * rotation, which is why the outer shell needs an explicit height rather than
- * sizing to content like the plain card it replaces.
+ * Only the back is absolutely positioned; the front stays in flow and is what
+ * gives the card its height. That way the reserved slot is exactly the front's
+ * box — the two faces cannot disagree about their size — and the card is only
+ * as tall as its own copy instead of being padded out to clear a fixed height.
  */
 export function FlipCard({
   title,
@@ -29,7 +30,13 @@ export function FlipCard({
 
   return (
     <div
-      className={cn("group relative h-60 w-full [perspective:1200px]", className)}
+      // Square, so the card is the same object whichever way it is facing and
+      // whatever length its copy runs to. The aspect ratio gives the shell a
+      // definite height, which is what the faces inside size themselves against.
+      className={cn(
+        "group relative aspect-square w-full [perspective:1200px]",
+        className,
+      )}
       onMouseEnter={() => setIsFlipped(true)}
       onMouseLeave={() => setIsFlipped(false)}
     >
@@ -39,10 +46,14 @@ export function FlipCard({
           isFlipped ? "[transform:rotateY(180deg)]" : "[transform:rotateY(0deg)]",
         )}
       >
-        {/* Front — identical to the plain (non-flipping) feature card */}
+        {/* Front — copy sits at the top of the square, inside the padding, and
+            the room left over below it is simply room. `justify-start` is the
+            flex default but is stated here because it is a decision now: the
+            card is much taller than its text and centring would otherwise be
+            the tempting thing to do. */}
         <div
           className={cn(
-            "absolute inset-0 flex h-full w-full flex-col gap-3 overflow-hidden",
+            "flex h-full w-full flex-col justify-start gap-3 overflow-hidden",
             "rounded-[24px] bg-[var(--surface)] p-6 md:p-7",
             "[backface-visibility:hidden]",
           )}
@@ -56,15 +67,16 @@ export function FlipCard({
           <p className="text-[15px] leading-[1.55] text-ink-62">{body}</p>
         </div>
 
-        {/* Back — shrunk mockup placeholder */}
+        {/* Back — the reserved slot, laid over the front so it takes exactly
+            the front's box rather than a shape of its own. */}
         <div
           className={cn(
-            "absolute inset-0 flex h-full w-full items-center justify-center",
-            "rounded-[24px] bg-[var(--surface)] p-6 md:p-7",
+            "absolute inset-0 overflow-hidden",
+            "rounded-[24px] bg-[var(--surface)]",
             "[backface-visibility:hidden] [transform:rotateY(180deg)]",
           )}
         >
-          <DeviceFrame label={mockupLabel ?? title} className="max-w-[76px]" />
+          <Placeholder label={mockupLabel ?? title} />
         </div>
       </div>
     </div>

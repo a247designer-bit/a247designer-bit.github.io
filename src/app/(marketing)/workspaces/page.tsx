@@ -6,28 +6,16 @@ import { Band } from "@/components/site/band";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Split } from "@/components/site/pieces";
-import { MediaFrame } from "@/components/site/media";
 import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary, TextLink } from "@/components/site/cta";
 import { Reveal } from "@/components/motion/reveal";
+import { WORKSPACE_GROUPS } from "@/lib/workspace-categories";
 
 export const metadata: Metadata = {
   title: "Workspaces",
   description:
     "Discover flexible beauty workspaces built for the way independent professionals work.",
 };
-
-const GROUPS = [
-  { group: "Hair & Barber", items: ["Barber Chairs", "Hair Stations"] },
-  {
-    group: "Nail & Beauty",
-    items: ["Nail Desks", "Pedicure Lounges", "Makeup Stations"],
-  },
-  {
-    group: "Wellness & Studios",
-    items: ["Massage Rooms", "Treatment Rooms", "Private Studios"],
-  },
-];
 
 export default function WorkspacesPage() {
   return (
@@ -37,6 +25,18 @@ export default function WorkspacesPage() {
         title="Find your place."
         lede="Discover flexible beauty workspaces built for the way independent professionals work."
         actions={<CtaPrimary href="/">Find a workspace</CtaPrimary>}
+        media={
+          <div className="overflow-hidden rounded-[28px]">
+            <Image
+              src="/images/workspaces-hero.jpg"
+              alt="An illustrated barber chair, mirror and tool trolley"
+              width={1254}
+              height={1254}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+        }
       />
 
       <Band tone="quiet" stacked aria-labelledby="variety">
@@ -55,7 +55,7 @@ export default function WorkspacesPage() {
           </Reveal>
 
           <div className="grid gap-4 md:grid-cols-3">
-            {GROUPS.map((group, i) => (
+            {WORKSPACE_GROUPS.map((group, i) => (
               <Reveal
                 key={group.group}
                 delay={i * 80}
@@ -97,11 +97,17 @@ export default function WorkspacesPage() {
               id: "w-map",
               title: "Find space near you",
               icon: <MapPin />,
+              summary:
+                "Browse available workspaces by location, type and price.",
               body: "Explore available beauty workspaces by location, type and price.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: map + listings grid — split view"
+                <Image
+                  src="/find-space-near-you.png"
+                  alt="The Blookd Rental app's workspace search screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -109,14 +115,17 @@ export default function WorkspacesPage() {
               id: "w-know",
               title: "Know before you book",
               icon: <Search />,
+              summary:
+                "Photos, amenities, availability and pricing, before you commit.",
               body: "Explore photos, location, amenities, availability and pricing before making your choice.",
               media: (
                 <Image
-                  src="/images/barber-chair.jpg"
-                  alt="A barber chair available to book on Blookd Rental"
-                  width={1200}
-                  height={800}
-                  className="h-auto w-full object-cover"
+                  src="/know-before-you-book.png"
+                  alt="The Blookd Rental app's workspace detail screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -124,23 +133,35 @@ export default function WorkspacesPage() {
               id: "w-schedule",
               title: "Work around your schedule",
               icon: <CalendarDays />,
+              summary:
+                "Choose the days and hours that fit your work, not someone else's.",
               body: "Choose the days and times that make sense for your work instead of adapting your business to someone else's schedule.",
               media: (
-                <MediaFrame ratio="4 / 3" label="reserved: availability calendar" />
+                <Image
+                  src="/work-on-your-schedule-3.png"
+                  alt="The Blookd Rental app's availability calendar screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
               ),
             },
             {
               id: "w-hosts",
               title: "Meet the people behind the place",
               icon: <Store />,
+              summary:
+                "Talk directly with hosts and keep every booking in one place.",
               body: "Connect directly with workspace hosts and keep your rental bookings together in Blookd Rental.",
               media: (
                 <Image
-                  src="/images/host-space.jpg"
-                  alt="A host showing a professional around their space"
-                  width={1200}
-                  height={800}
-                  className="h-auto w-full object-cover"
+                  src="/keep-everything-together-2.png"
+                  alt="The Blookd Rental app's bookings screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },

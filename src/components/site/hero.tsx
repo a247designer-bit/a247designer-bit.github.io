@@ -11,6 +11,12 @@ type HeroProps = {
   title: ReactNode;
   lede: string;
   actions?: ReactNode;
+  /**
+   * Sits beside the copy on wide screens. Dropped below `lg`: the hero is
+   * pinned and already fills the viewport there, so a second column would only
+   * push the copy off the screen it is meant to open.
+   */
+  media?: ReactNode;
   /** The home hero runs the ribbon; section pages get a plain ground. */
   ribbon?: boolean;
   className?: string;
@@ -38,6 +44,7 @@ export function Hero({
   title,
   lede,
   actions,
+  media,
   ribbon = false,
   className,
 }: HeroProps) {
@@ -52,7 +59,9 @@ export function Hero({
     const hero = heroRef.current;
     if (!hero) return;
     const observer = new ResizeObserver(([entry]) => {
-      setSpacerHeight(entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height);
+      setSpacerHeight(
+        entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height,
+      );
     });
     observer.observe(hero);
     return () => observer.disconnect();
@@ -85,17 +94,27 @@ export function Hero({
         <GradientBackground position="50% 90%" to="#D9D9D9" />
         {ribbon ? <Ribbon paused={covered} /> : null}
 
-        <div className="container-site relative z-10 flex flex-col gap-16 md:gap-20">
-          <div className="flex max-w-[560px] flex-col items-start gap-7">
-            <Reveal>
-              <span className="inline-flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#2b3440]">
-                <span aria-hidden className="size-2.5 bg-[#2b3440]" />
-                {eyebrow}
-              </span>
-            </Reveal>
+        <div
+          className={cn(
+            "container-site relative z-10",
+            // Only becomes two columns when there is something to put in the
+            // second one; without media the copy keeps the layout it had.
+            media
+              ? "lg:grid lg:grid-cols-[minmax(0,560px)_1fr] lg:items-center lg:gap-16"
+              : "",
+          )}
+        >
+          <div className="flex flex-col gap-16 md:gap-20">
+            <div className="flex max-w-[560px] flex-col items-start gap-7">
+              <Reveal>
+                <span className="inline-flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#2b3440]">
+                  <span aria-hidden className="size-2.5 bg-[#2b3440]" />
+                  {eyebrow}
+                </span>
+              </Reveal>
 
-            <Reveal delay={80}>
-              {/* Sized to the copy column rather than to the viewport: at display-1
+              <Reveal delay={80}>
+                {/* Sized to the copy column rather than to the viewport: at display-1
                   the second line runs under the ribbon and stops being
                   readable. Width stays capped to this same column, so the
                   larger type only ever wraps onto more lines instead of
@@ -103,23 +122,30 @@ export function Hero({
                   4.5rem (not growing further past md) because that's the
                   largest size at which "Find your people" and "Find your
                   place" each still fit this column on one line apiece. */}
-              <h1 className="font-display text-[2.75rem] leading-[1.12] tracking-[-0.03em] text-[#2b3440] sm:text-[3.25rem] md:text-[4.5rem] md:leading-[1.05]">
-                {title}
-              </h1>
-            </Reveal>
+                <h1 className="font-display text-[2.75rem] leading-[1.12] tracking-[-0.03em] text-[#2b3440] sm:text-[3.25rem] md:text-[4.5rem] md:leading-[1.05]">
+                  {title}
+                </h1>
+              </Reveal>
 
-            <Reveal delay={160}>
-              <p className="max-w-[46ch] text-[17px] leading-[1.55] text-ink-62">
-                {lede}
-              </p>
-            </Reveal>
+              <Reveal delay={160}>
+                <p className="max-w-[46ch] text-[17px] leading-[1.55] text-ink-62">
+                  {lede}
+                </p>
+              </Reveal>
+            </div>
+
+            {actions ? (
+              <Reveal delay={240} className="flex max-w-[560px] justify-start">
+                <div className="flex flex-wrap items-center justify-start gap-3">
+                  {actions}
+                </div>
+              </Reveal>
+            ) : null}
           </div>
 
-          {actions ? (
-            <Reveal delay={240} className="flex max-w-[560px] justify-start">
-              <div className="flex flex-wrap items-center justify-start gap-3">
-                {actions}
-              </div>
+          {media ? (
+            <Reveal delay={200} className="hidden lg:block">
+              {media}
             </Reveal>
           ) : null}
         </div>
@@ -131,7 +157,9 @@ export function Hero({
         ref={spacerRef}
         aria-hidden="true"
         className="min-h-[92svh]"
-        style={spacerHeight ? { height: spacerHeight, minHeight: 0 } : undefined}
+        style={
+          spacerHeight ? { height: spacerHeight, minHeight: 0 } : undefined
+        }
       />
     </>
   );

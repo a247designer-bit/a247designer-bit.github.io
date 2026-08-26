@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const MotionLink = motion.create(Link);
 
 const BASE =
-  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-full px-6 py-3 text-[15px] font-medium whitespace-nowrap transition-colors duration-300";
+  "relative isolate inline-flex items-center justify-center overflow-hidden rounded-[8px] px-6 py-3 text-[15px] font-medium whitespace-nowrap transition-colors duration-300";
 
 const FILL_DURATION = 0.5;
 const FILL_EASE = [0.16, 1, 0.3, 1] as const;

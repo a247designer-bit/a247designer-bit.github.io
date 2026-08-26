@@ -6,7 +6,6 @@ import { Band } from "@/components/site/band";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Split, Statement } from "@/components/site/pieces";
-import { MediaFrame } from "@/components/site/media";
 import { Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary } from "@/components/site/cta";
 
@@ -24,6 +23,18 @@ export default function HostsPage() {
         title="Put your space to work."
         lede="Connect available beauty workspace with independent professionals looking for exactly that. You set the price, the hours and who books — no long-term commitment."
         actions={<CtaPrimary href="/">List your space</CtaPrimary>}
+        media={
+          <div className="overflow-hidden rounded-[28px]">
+            <Image
+              src="/images/hosts-hero.jpg"
+              alt="An illustrated portrait of a man looking up"
+              width={1254}
+              height={1254}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+        }
       />
 
       <Band tone="quiet" stacked size="tall" aria-labelledby="host-flow">
@@ -45,11 +56,17 @@ export default function HostsPage() {
               id: "h-listing",
               title: "List your space",
               icon: <ImagePlus />,
+              summary:
+                "Photos, details, amenities and pricing, in one clear listing.",
               body: "Create a listing with photos, workspace details, amenities, pricing and everything professionals need to make a decision.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: listing builder — photos · details · amenities · pricing"
+                <Image
+                  src="/list-your-space.png"
+                  alt="The Blookd Rental app's listing photo upload screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -57,11 +74,17 @@ export default function HostsPage() {
               id: "h-calendar",
               title: "Set your availability",
               icon: <CalendarDays />,
+              summary:
+                "Open only the hours you want and make unused time bookable.",
               body: "Choose when your workspace is available and make unused time bookable.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: host availability calendar"
+                <Image
+                  src="/set-your-availability.png"
+                  alt="The Blookd Rental app's availability settings screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -69,14 +92,17 @@ export default function HostsPage() {
               id: "h-reach",
               title: "Reach people ready to work",
               icon: <Users />,
+              summary:
+                "Meet professionals actively searching for a place to work.",
               body: "Connect with beauty professionals actively searching for flexible places to run their business.",
               media: (
                 <Image
-                  src="/images/independent-pro.jpg"
-                  alt="A professional looking for a place to work"
-                  width={1200}
-                  height={800}
-                  className="h-auto w-full object-cover"
+                  src="/reach-people-ready-to-work.png"
+                  alt="The Blookd Rental app's host inbox screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -84,8 +110,19 @@ export default function HostsPage() {
               id: "h-earn",
               title: "Earn from unused space",
               icon: <Wallet />,
+              summary:
+                "Turn idle chairs and rooms into steady additional income.",
               body: "Turn unused workspace into additional earning potential without changing how you run your core business.",
-              media: <MediaFrame ratio="4 / 3" label="reserved: host earnings" />,
+              media: (
+                <Image
+                  src="/earn-from-unused-space.png"
+                  alt="The Blookd Rental app's create promotion screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
           ]}
         />
@@ -126,7 +163,9 @@ export default function HostsPage() {
           </Lede>
           <div className="flex flex-wrap items-center gap-3">
             <CtaPrimary href="/">Get Blookd Rental</CtaPrimary>
-            <CtaSecondary href="/workspaces">See how renting works</CtaSecondary>
+            <CtaSecondary href="/workspaces">
+              See how renting works
+            </CtaSecondary>
           </div>
         </Split>
       </Band>

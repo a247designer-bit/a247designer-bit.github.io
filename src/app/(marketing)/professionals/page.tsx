@@ -29,6 +29,18 @@ export default function ProfessionalsPage() {
             <CtaSecondary href="/workspaces">Find a workspace</CtaSecondary>
           </>
         }
+        media={
+          <div className="overflow-hidden rounded-[28px]">
+            <Image
+              src="/images/professionals-hero.jpg"
+              alt="An illustration of a manicurist's hands at work"
+              width={1254}
+              height={1254}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+        }
       />
 
       <Band tone="quiet" stacked aria-labelledby="visibility">
@@ -44,7 +56,7 @@ export default function ProfessionalsPage() {
             Build a profile around your work and put it in front of people
             looking for services like yours.
           </Lede>
-          <p className="font-mono text-[12px] tracking-[0.06em] text-ink-62">
+          <p className="text-[12px] tracking-[0.06em] text-ink-62">
             portfolio · services · availability
           </p>
         </Split>
@@ -69,32 +81,71 @@ export default function ProfessionalsPage() {
               id: "p-profile",
               title: "Build your profile",
               icon: <UserRound />,
+              summary:
+                "Put your work in front of the people already looking for it.",
               body: "Build a profile around your work and put it in front of people looking for services like yours.",
-              media: <MediaFrame ratio="4 / 3" label="reserved: profile builder" />,
+              media: (
+                <Image
+                  src="/build-your-profile.png"
+                  alt="The Blookd app's professional profile screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
             {
               id: "p-services",
               title: "Show your services",
               icon: <Sparkles />,
+              summary:
+                "Lay out what you offer so clients can choose with confidence.",
               body: "Give clients a clear way to explore your work and choose the service they want.",
-              media: <MediaFrame ratio="4 / 3" label="reserved: service list" />,
+              media: (
+                <Image
+                  src="/show-your-services.png"
+                  alt="The Blookd app's marketing and service posts screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
             {
               id: "p-time",
               title: "Take bookings",
               icon: <CalendarDays />,
+              summary:
+                "Let clients pick a time and confirm, without the back and forth.",
               body: "Let clients find a time that works and confirm the appointment without the back and forth.",
-              media: <MediaFrame ratio="4 / 3" label="reserved: time picker" />,
+              media: (
+                <Image
+                  src="/take-bookings.png"
+                  alt="The Blookd app's schedule and next appointment screen"
+                  width={886}
+                  height={1812}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
             {
               id: "p-space",
               title: "Find a place to work",
               icon: <MapPin />,
+              summary:
+                "Use Blookd Rental to find a space when your business needs one.",
               body: "Use Blookd Rental to discover flexible workspaces when your business needs them.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: workspace listings — cross-link into Blookd Rental"
+                <Image
+                  src="/find-a-place-to-work.png"
+                  alt="The Blookd Rental app's workspace search screen"
+                  width={886}
+                  height={1811}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },

@@ -1,16 +1,7 @@
 import Image from "next/image";
-import {
-  CalendarDays,
-  Compass,
-  MapPin,
-  Repeat,
-  Search,
-  Store,
-} from "lucide-react";
 
 import { Band } from "@/components/site/band";
 import { Hero } from "@/components/site/hero";
-import { AppShowcase } from "@/components/site/app-showcase";
 import { NetworkOrbital } from "@/components/site/network-orbital";
 import { ShaderBackground } from "@/components/ui/static-mesh-gradient";
 import AnimatedTextCycle from "@/components/ui/animated-text-cycle";
@@ -59,89 +50,61 @@ export default function HomePage() {
         </div>
       </Band>
 
-      {/* S3 — the client app */}
-      <Band tone="paper" stacked size="tall" aria-labelledby="clients">
-        <AppShowcase
-          eyebrow="Blookd · Beauty services"
-          headingId="clients"
+      {/* S2.5 — for people. Deliberately the same shape as the "for
+          professionals" band further down — same split, same card row — so the
+          two sides of the network are introduced as a matched pair. */}
+      <Band tone="paper" stacked aria-labelledby="people">
+        <Split
+          headingId="people"
+          eyebrow={<Eyebrow>For people</Eyebrow>}
           heading="Find the right pro."
-          footer={
-            <div className="flex flex-col items-start gap-4">
-              <p className="max-w-[32ch] text-[15px] leading-[1.55] text-ink-62">
-                Discover independent beauty and wellness professionals, explore
-                their work, compare services and book when it works for you.
-              </p>
-              <CtaSecondary href="/services">Explore Blookd</CtaSecondary>
+          media={
+            <div className="overflow-hidden rounded-[28px]">
+              <Image
+                src="/images/find-the-right-pro.jpg"
+                alt="An illustrated portrait of a woman with voluminous curly hair"
+                width={1254}
+                height={1254}
+                className="h-full w-full object-cover"
+              />
             </div>
           }
-          steps={[
-            {
-              id: "c-discover",
-              title: "Discover",
-              icon: <Compass />,
-              body: "Explore professionals near you and find the style, service and experience you're looking for.",
-              media: (
-                <Image
-                  src="/discover-2.png"
-                  alt="The Blookd app's discover screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "c-explore",
-              title: "Explore",
-              icon: <Search />,
-              body: "See portfolios, services, pricing, availability and reviews before you decide.",
-              media: (
-                <Image
-                  src="/explore.png"
-                  alt="The Blookd app's professional profile screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "c-book",
-              title: "Book",
-              icon: <CalendarDays />,
-              body: "Choose a time that works for you and book directly with your professional.",
-              media: (
-                <Image
-                  src="/book.png"
-                  alt="The Blookd app's booking flow screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "c-return",
-              title: "Come back",
-              icon: <Repeat />,
-              body: "Keep your favorite professionals close and make your next appointment easier.",
-              media: (
-                <Image
-                  src="/come-back-2.png"
-                  alt="The Blookd app's saved professionals screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-          ]}
-        />
+        >
+          <Lede>
+            Discover independent beauty and wellness professionals, explore
+            their work, compare services and book when it works for you.
+          </Lede>
+          <div className="flex flex-wrap items-center gap-3">
+            <CtaPrimary href="/services">Explore Blookd</CtaPrimary>
+            <TextLink href="/professionals">Join as a pro</TextLink>
+          </div>
+        </Split>
+
+        <div className="container-site mt-16 md:mt-24">
+          <FeatureCards
+            columns={4}
+            items={[
+              {
+                title: "Discover.",
+                body: "Browse professionals near you by service, style and the look you want.",
+              },
+              {
+                title: "Explore.",
+                body: "Portfolios, pricing, availability and reviews, all on one profile.",
+              },
+              {
+                title: "Book.",
+                body: "Pick a time that suits you and book straight with your pro.",
+              },
+              {
+                title: "Come back.",
+                body: "Keep your favorites close so the next appointment takes seconds.",
+              },
+            ]}
+          />
+        </div>
       </Band>
+
 
       {/* S6 — statement */}
       <Band
@@ -260,93 +223,8 @@ export default function HomePage() {
         </Split>
       </Band>
 
-      {/* S7 — Blookd Rental */}
-      <Band tone="dark" stacked size="tall" aria-labelledby="rental">
-        <AppShowcase
-          eyebrow="Blookd Rental · Beauty workspaces"
-          headingId="rental"
-          heading="Find your place."
-          footer={
-            <div className="flex flex-col items-start gap-4">
-              <p className="max-w-[32ch] text-[15px] leading-[1.55] text-ink-62">
-                From a barber chair for the day to a private studio for longer
-                stays, Blookd Rental helps independent professionals find places
-                designed for the work they do.
-              </p>
-              <CtaPrimary href="/workspaces">Find a workspace</CtaPrimary>
-            </div>
-          }
-          steps={[
-            {
-              id: "r-near",
-              title: "Find space near you.",
-              icon: <MapPin />,
-              body: "Explore available beauty workspaces by location, type and price.",
-              media: (
-                <Image
-                  src="/find-space-near-you.png"
-                  alt="The Blookd Rental app's workspace search screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "r-know",
-              title: "Know before you book.",
-              icon: <Search />,
-              body: "Check photos, workspace details, amenities and availability before choosing your space.",
-              media: (
-                <Image
-                  src="/know-before-you-book.png"
-                  alt="The Blookd Rental app's workspace detail screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "r-schedule",
-              title: "Work on your schedule.",
-              icon: <CalendarDays />,
-              body: "Book the time you need without being tied to a traditional long-term setup.",
-              media: (
-                <Image
-                  src="/work-on-your-schedule-3.png"
-                  alt="The Blookd Rental app's availability calendar screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-            {
-              id: "r-together",
-              title: "Keep everything together.",
-              icon: <Store />,
-              body: "Manage your workspace bookings and stay connected with hosts from one place.",
-              media: (
-                <Image
-                  src="/keep-everything-together-2.png"
-                  alt="The Blookd Rental app's bookings screen"
-                  width={443}
-                  height={906}
-                  loading="eager"
-                  className="mx-auto w-full max-w-[260px]"
-                />
-              ),
-            },
-          ]}
-        />
-      </Band>
-
       {/* S8 — hosts */}
-      <Band tone="paper" stacked aria-labelledby="hosts">
+      <Band tone="dark" stacked aria-labelledby="hosts">
         <Split
           reverse
           headingId="hosts"
@@ -570,33 +448,6 @@ export default function HomePage() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </Band>
-
-      {/* S13 — final CTA */}
-      <Band tone="paper" stacked aria-labelledby="final">
-        <div className="container-site">
-          <Reveal className="flex max-w-[52ch] flex-col items-start gap-7">
-            <h2 id="final" className="text-display-1">
-              Find your people.
-              <br />
-              Find your place.
-            </h2>
-            <Lede>
-              Whether you&apos;re booking a service, building your independent
-              career or opening your space to professionals, there&apos;s a
-              place for you in Blookd.
-            </Lede>
-            <div className="flex flex-wrap items-center gap-3">
-              <CtaPrimary href="/services">Get Blookd</CtaPrimary>
-              <CtaSecondary href="/workspaces">Get Blookd Rental</CtaSecondary>
-              <TextLink href="/hosts">List your space</TextLink>
-            </div>
-            <p className="mt-4 max-w-[46ch] text-[15px] leading-[1.55] text-ink-62">
-              However you show up — booking, building or opening your doors —
-              you&apos;re part of the same network.
-            </p>
-          </Reveal>
         </div>
       </Band>
     </>

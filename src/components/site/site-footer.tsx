@@ -16,14 +16,22 @@ const COLUMNS = [
   },
 ];
 
+const APPS = [
+  { name: "Blookd", icon: "/brand/app-icon-blookd.png" },
+  { name: "Blookd Rental", icon: "/brand/app-icon-rental.png" },
+];
+
 /**
  * A dark card inset from the page edges, so the band behind it stays visible
  * down the sides — the footer reads as the last object on the page rather than
  * as the page running out.
+ *
+ * The inset runs on all four sides: the gap on top separates the card from the
+ * last band, which rounds its own bottom edge to meet it (see globals.css).
  */
 export function SiteFooter() {
   return (
-    <div className="relative bg-quiet px-4 pb-4 md:px-8 md:pb-8">
+    <div className="relative bg-quiet p-4 md:p-8">
       <footer className="dark rounded-[var(--radius-band)] bg-paper px-6 py-12 text-foreground md:px-12 md:py-16">
         <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-14">
           <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
@@ -37,6 +45,25 @@ export function SiteFooter() {
                 The network for independent beauty — people, professionals and
                 the places they work.
               </p>
+
+              {/* The two apps, as their own icons. Left unlinked on purpose:
+                  there are no store listings to point at yet, and an icon that
+                  looks like a download button but goes somewhere else is worse
+                  than one that simply sits there. */}
+              <ul className="mt-1 flex items-center gap-3">
+                {APPS.map((app) => (
+                  <li key={app.name}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size brand asset, nothing for the optimizer to do */}
+                    <img
+                      src={app.icon}
+                      alt={app.name}
+                      width={64}
+                      height={64}
+                      className="size-16 rounded-[14px]"
+                    />
+                  </li>
+                ))}
+              </ul>
             </div>
 
             {COLUMNS.map((col) => (

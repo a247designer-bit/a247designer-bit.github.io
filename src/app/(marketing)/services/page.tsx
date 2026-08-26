@@ -5,8 +5,8 @@ import { CalendarDays, Compass, Heart, Search } from "lucide-react";
 import { Band } from "@/components/site/band";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
+import { SpotlightSearch } from "@/components/ui/spotlight-search";
 import { Statement } from "@/components/site/pieces";
-import { DeviceFrame, MediaFrame } from "@/components/site/media";
 import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary } from "@/components/site/cta";
 import { Reveal } from "@/components/motion/reveal";
@@ -25,6 +25,18 @@ export default function ServicesPage() {
         title="Find the right pro."
         lede="Discover beauty and wellness professionals whose work fits your style, needs and schedule."
         actions={<CtaPrimary href="/">Get Blookd</CtaPrimary>}
+        media={
+          <div className="overflow-hidden rounded-[28px]">
+            <Image
+              src="/images/services-hero.jpg"
+              alt="Illustrated portraits of four beauty professionals"
+              width={1254}
+              height={1254}
+              priority
+              className="h-full w-full object-cover"
+            />
+          </div>
+        }
       />
 
       <Band tone="quiet" stacked aria-labelledby="discovery">
@@ -39,12 +51,12 @@ export default function ServicesPage() {
               Whether it&apos;s your regular cut or something completely new,
               Blookd helps you find someone who feels right for you.
             </Lede>
-            <p className="font-mono text-[12px] tracking-[0.06em] text-ink-62">
+            <p className="text-[12px] tracking-[0.06em] text-ink-62">
               service · location · availability
             </p>
           </Reveal>
           <Reveal delay={120}>
-            <MediaFrame ratio="4 / 3" label="reserved: live search + filters" />
+            <SpotlightSearch />
           </Reveal>
         </div>
       </Band>
@@ -68,18 +80,35 @@ export default function ServicesPage() {
               id: "s-discover",
               title: "Discover",
               icon: <Compass />,
+              summary:
+                "Search by service, style and location, and see which professionals work near you.",
               body: "Explore professionals near you and find the style, service and experience you're looking for.",
-              media: <MediaFrame ratio="4 / 3" label="reserved: discovery feed" />,
+              media: (
+                <Image
+                  src="/discover-2.png"
+                  alt="The Blookd app's discover screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
             {
               id: "s-profiles",
               title: "Explore profiles",
               icon: <Search />,
+              summary:
+                "Portfolios, pricing, availability and reviews, gathered on a single profile.",
               body: "Explore portfolios, services, pricing, availability and reviews in one place.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: portfolio card row — pro profile preview"
+                <Image
+                  src="/explore.png"
+                  alt="The Blookd app's professional profile screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -87,11 +116,17 @@ export default function ServicesPage() {
               id: "s-book",
               title: "Book them",
               icon: <CalendarDays />,
+              summary:
+                "Pick the service and the time that fit your week, then confirm in a few taps.",
               body: "Choose the service and time that work for you and manage your appointment from Blookd.",
               media: (
-                <MediaFrame
-                  ratio="4 / 3"
-                  label="reserved: booking flow — service + time picker"
+                <Image
+                  src="/book.png"
+                  alt="The Blookd app's booking flow screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
                 />
               ),
             },
@@ -99,8 +134,19 @@ export default function ServicesPage() {
               id: "s-trust",
               title: "Come back",
               icon: <Heart />,
+              summary:
+                "Save the professionals you trust and rebook them without starting over.",
               body: "Keep track of the professionals you love and make it easier to come back when it's time for your next appointment.",
-              media: <DeviceFrame label="Saved professionals" />,
+              media: (
+                <Image
+                  src="/come-back-2.png"
+                  alt="The Blookd app's saved professionals screen"
+                  width={443}
+                  height={906}
+                  loading="eager"
+                  className="mx-auto w-full max-w-[260px]"
+                />
+              ),
             },
           ]}
         />
@@ -126,10 +172,10 @@ export default function ServicesPage() {
           </Reveal>
           <Reveal delay={120} className="overflow-hidden rounded-[28px]">
             <Image
-              src="/images/community.jpg"
-              alt="A client with their beauty professional"
-              width={1200}
-              height={900}
+              src="/images/your-next-pro.jpg"
+              alt="An illustrated portrait of a hair stylist with a comb and scissors"
+              width={1254}
+              height={1254}
               className="h-full w-full object-cover"
             />
           </Reveal>

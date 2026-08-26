@@ -61,7 +61,7 @@ export function MediaFrame({
 export function Placeholder({ label }: { label: string }) {
   return (
     <div className="grid size-full place-items-center p-4">
-      <span className="text-center font-mono text-[11px] tracking-[0.06em] text-ink-62">
+      <span className="text-center text-[11px] tracking-[0.06em] text-ink-62">
         [ {label} ]
       </span>
     </div>
