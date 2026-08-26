@@ -124,7 +124,6 @@ export default function WorkspacesPage() {
                   alt="The Blookd Rental app's workspace detail screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -142,7 +141,6 @@ export default function WorkspacesPage() {
                   alt="The Blookd Rental app's availability calendar screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -160,7 +158,6 @@ export default function WorkspacesPage() {
                   alt="The Blookd Rental app's bookings screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),

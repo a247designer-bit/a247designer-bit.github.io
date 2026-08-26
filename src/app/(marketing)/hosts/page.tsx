@@ -83,7 +83,6 @@ export default function HostsPage() {
                   alt="The Blookd Rental app's availability settings screen"
                   width={886}
                   height={1812}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -101,7 +100,6 @@ export default function HostsPage() {
                   alt="The Blookd Rental app's host inbox screen"
                   width={886}
                   height={1812}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -119,7 +117,6 @@ export default function HostsPage() {
                   alt="The Blookd Rental app's create promotion screen"
                   width={886}
                   height={1812}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),

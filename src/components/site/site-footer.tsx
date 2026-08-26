@@ -16,11 +16,6 @@ const COLUMNS = [
   },
 ];
 
-const APPS = [
-  { name: "Blookd", icon: "/brand/app-icon-blookd.png" },
-  { name: "Blookd Rental", icon: "/brand/app-icon-rental.png" },
-];
-
 /**
  * A dark card inset from the page edges, so the band behind it stays visible
  * down the sides — the footer reads as the last object on the page rather than
@@ -45,25 +40,6 @@ export function SiteFooter() {
                 The network for independent beauty — people, professionals and
                 the places they work.
               </p>
-
-              {/* The two apps, as their own icons. Left unlinked on purpose:
-                  there are no store listings to point at yet, and an icon that
-                  looks like a download button but goes somewhere else is worse
-                  than one that simply sits there. */}
-              <ul className="mt-1 flex items-center gap-3">
-                {APPS.map((app) => (
-                  <li key={app.name}>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size brand asset, nothing for the optimizer to do */}
-                    <img
-                      src={app.icon}
-                      alt={app.name}
-                      width={64}
-                      height={64}
-                      className="size-16 rounded-[14px]"
-                    />
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {COLUMNS.map((col) => (
@@ -87,7 +63,9 @@ export function SiteFooter() {
           </div>
 
           <div className="flex flex-col gap-3 border-t border-border pt-8 text-[13px] text-ink-62 sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} Blookd. All rights reserved.</span>
+            <span>
+              © {new Date().getFullYear()} Blookd. All rights reserved.
+            </span>
           </div>
         </div>
       </footer>

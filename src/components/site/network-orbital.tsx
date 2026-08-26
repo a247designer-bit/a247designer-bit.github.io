@@ -18,9 +18,11 @@ import { Reveal } from "@/components/motion/reveal";
 
 const ECOSYSTEM = [
   {
+    // No media yet: the GIF that used to sit here was 6.3MB — 84% of the home
+    // page's payload — for a 176px preview most visitors never hover. Left as
+    // a marked placeholder until there is a still or a clip worth its weight.
     title: "People",
     body: "Looking for someone they can trust.",
-    media: "/people.gif",
   },
   {
     title: "Professionals",
