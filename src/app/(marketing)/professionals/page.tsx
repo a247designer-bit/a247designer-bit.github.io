@@ -108,7 +108,6 @@ export default function ProfessionalsPage() {
                   alt="The Blookd app's marketing and service posts screen"
                   width={886}
                   height={1812}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -126,7 +125,6 @@ export default function ProfessionalsPage() {
                   alt="The Blookd app's schedule and next appointment screen"
                   width={886}
                   height={1812}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -144,7 +142,6 @@ export default function ProfessionalsPage() {
                   alt="The Blookd Rental app's workspace search screen"
                   width={886}
                   height={1811}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),

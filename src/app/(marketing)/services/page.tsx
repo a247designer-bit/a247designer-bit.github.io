@@ -107,7 +107,6 @@ export default function ServicesPage() {
                   alt="The Blookd app's professional profile screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -125,7 +124,6 @@ export default function ServicesPage() {
                   alt="The Blookd app's booking flow screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
@@ -143,7 +141,6 @@ export default function ServicesPage() {
                   alt="The Blookd app's saved professionals screen"
                   width={443}
                   height={906}
-                  loading="eager"
                   className="mx-auto w-full max-w-[260px]"
                 />
               ),
