@@ -20,6 +20,29 @@ const COLUMNS = [
 ];
 
 /**
+ * The legal row, kept out of the product columns above.
+ *
+ * Terms and Privacy point at the documents already published on blookd.com
+ * rather than being restated here — two copies of a binding document is one
+ * copy too many, and the one that goes stale is always the duplicate. The
+ * other two live on this site.
+ */
+const LEGAL = [
+  {
+    href: "https://www.blookd.com/terms-conditions",
+    label: "Terms and Conditions",
+    external: true,
+  },
+  {
+    href: "https://www.blookd.com/privacy-policy",
+    label: "Privacy Policy",
+    external: true,
+  },
+  { href: "/cancellation-policy", label: "Cancellation Policy" },
+  { href: "/cookies-policy", label: "Cookies Policy" },
+];
+
+/**
  * A dark card inset from the page edges, so the band behind it stays visible
  * down the sides — the footer reads as the last object on the page rather than
  * as the page running out.
@@ -65,10 +88,29 @@ export function SiteFooter() {
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-border pt-8 text-[13px] text-ink-62 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-6 border-t border-border pt-8 text-[13px] text-ink-62 lg:flex-row lg:items-center lg:justify-between">
             <span>
               © {new Date().getFullYear()} Blookd. All rights reserved.
             </span>
+
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
+              {LEGAL.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    // Same 44px row as the columns above: these sit closer
+                    // together than product links do, so the touch target
+                    // matters more here, not less.
+                    className="inline-flex min-h-11 items-center transition-colors hover:text-foreground"
+                    {...(link.external
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </footer>
