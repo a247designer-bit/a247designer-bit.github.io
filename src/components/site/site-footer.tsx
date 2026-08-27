@@ -4,9 +4,12 @@ const COLUMNS = [
   {
     title: "Product",
     links: [
+      // Same order as the header's NAV, deliberately: the two lists are the
+      // same set of pages, and a visitor who learned the order up top should
+      // not have to re-read it down here.
       { href: "/services", label: "Services" },
-      { href: "/workspaces", label: "Workspaces" },
       { href: "/professionals", label: "Professionals" },
+      { href: "/workspaces", label: "Workspaces" },
       { href: "/hosts", label: "Hosts" },
     ],
   },
