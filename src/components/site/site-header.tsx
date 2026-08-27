@@ -15,6 +15,16 @@ const NAV = [
 ];
 
 /**
+ * Trailing slashes are the site's URL style (`trailingSlash: true` in
+ * next.config), so `usePathname()` hands back "/services/" while NAV holds
+ * "/services". Comparing them raw never matched, which is why the current page
+ * was never marked in the nav at all. Both sides are trimmed before comparing;
+ * "/" is left alone because it is a path, not a trailing slash.
+ */
+const samePath = (a: string, b: string) =>
+  a.replace(/(.)\/$/, "$1") === b.replace(/(.)\/$/, "$1");
+
+/**
  * A floating pill that rides above whatever band is under it.
  *
  * It has its own solid background rather than a translucent one, so it stays
@@ -54,20 +64,32 @@ export function SiteHeader() {
 
           <nav className="hidden items-center lg:flex">
             {NAV.map((item) => {
-              const active = pathname === item.href;
+              const active = samePath(pathname, item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "rounded-full px-3.5 py-2 text-[15px] transition-colors",
+                    "grid place-items-center rounded-full px-3.5 py-2 text-[15px] transition-colors",
                     active
-                      ? "bg-ink-06 text-ink"
+                      ? "bg-ink-06 font-semibold text-ink"
                       : "text-ink-62 hover:text-ink",
                   )}
                 >
-                  {item.label}
+                  {/* Every item is sized by its own label AT THE BOLD WEIGHT,
+                      whether or not it is the current one: this copy is laid in
+                      the same grid cell as the visible label and only reserves
+                      width. Without it the row re-flows the moment the active
+                      item changes — and since these are client-side links, that
+                      reflow happens live, under the pointer, as a shove. */}
+                  <span
+                    aria-hidden
+                    className="invisible col-start-1 row-start-1 font-semibold"
+                  >
+                    {item.label}
+                  </span>
+                  <span className="col-start-1 row-start-1">{item.label}</span>
                 </Link>
               );
             })}
@@ -92,17 +114,29 @@ export function SiteHeader() {
         className="fixed inset-0 z-40 bg-paper px-6 pt-28 lg:hidden"
       >
         <nav className="flex flex-col">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              aria-current={pathname === item.href ? "page" : undefined}
-              className="border-b border-border py-5 font-display text-[28px] tracking-[-0.03em]"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {/* The display face ships Bold only, so weight cannot mark the
+              current page here the way it does in the desktop pill. The ink
+              ramp does it instead: the current page keeps full contrast and
+              the rest step back to 62% — the lowest alpha that still clears
+              4.5:1, so nothing in the menu becomes hard to read in order to
+              make one line easy. */}
+          {NAV.map((item) => {
+            const active = samePath(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "border-b border-border py-5 font-display text-[28px] tracking-[-0.03em] transition-colors",
+                  active ? "text-foreground" : "text-ink-62",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </>

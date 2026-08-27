@@ -8,6 +8,7 @@ import {
 import { Eyebrow, Lede } from "@/components/site/type";
 import { MediaFrame } from "@/components/site/media";
 import { Reveal } from "@/components/motion/reveal";
+import { AppAudienceSwitcher } from "@/components/site/app-audience-switcher";
 
 /**
  * Merges what were two separate sections — the ecosystem (people,
@@ -95,8 +96,9 @@ export function NetworkOrbital() {
 
       <Reveal
         delay={100}
-        className="grid gap-10 rounded-[16px] bg-[#081C15]/70 p-6 md:p-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:items-center lg:gap-16"
+        className="flex flex-col rounded-[16px] bg-[#081C15]/70 p-6 md:p-10"
       >
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:items-center lg:gap-16">
         <div className="flex flex-col gap-8">
           {ECOSYSTEM.map((item) => (
             <div key={item.title}>
@@ -137,6 +139,17 @@ export function NetworkOrbital() {
             />
           }
         />
+        </div>
+
+        {/* The apps themselves, as the same three audiences named above.
+
+            Deliberately no fill of its own: a second tint here — even at 4% —
+            draws a hard line across the panel, and the ecosystem, the orbit
+            and the apps are one argument, not two blocks stacked. Only the
+            spacing separates them. */}
+        <div className="mt-12 md:mt-20">
+          <AppAudienceSwitcher />
+        </div>
       </Reveal>
     </div>
   );

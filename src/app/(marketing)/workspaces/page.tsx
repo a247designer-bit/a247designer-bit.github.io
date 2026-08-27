@@ -83,6 +83,7 @@ export default function WorkspacesPage() {
           eyebrow="Blookd Rental"
           headingId="rental-flow"
           heading="Know the space before you book."
+          accent="indigo"
           footer={
             <div className="flex flex-col items-start gap-4">
               <p className="max-w-[32ch] text-[15px] leading-[1.55] text-ink-62">
@@ -102,7 +103,7 @@ export default function WorkspacesPage() {
               body: "Explore available beauty workspaces by location, type and price.",
               media: (
                 <Image
-                  src="/find-space-near-you.png"
+                  src="/find-space-near-you-indigo.png"
                   alt="The Blookd Rental app's workspace search screen"
                   width={443}
                   height={906}
@@ -120,7 +121,7 @@ export default function WorkspacesPage() {
               body: "Explore photos, location, amenities, availability and pricing before making your choice.",
               media: (
                 <Image
-                  src="/know-before-you-book.png"
+                  src="/know-before-you-book-indigo.png"
                   alt="The Blookd Rental app's workspace detail screen"
                   width={443}
                   height={906}
@@ -137,7 +138,7 @@ export default function WorkspacesPage() {
               body: "Choose the days and times that make sense for your work instead of adapting your business to someone else's schedule.",
               media: (
                 <Image
-                  src="/work-on-your-schedule-3.png"
+                  src="/work-on-your-schedule-3-indigo.png"
                   alt="The Blookd Rental app's availability calendar screen"
                   width={443}
                   height={906}
@@ -154,7 +155,7 @@ export default function WorkspacesPage() {
               body: "Connect directly with workspace hosts and keep your rental bookings together in Blookd Rental.",
               media: (
                 <Image
-                  src="/keep-everything-together-2.png"
+                  src="/keep-everything-together-2-indigo.png"
                   alt="The Blookd Rental app's bookings screen"
                   width={443}
                   height={906}

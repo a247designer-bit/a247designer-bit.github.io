@@ -25,6 +25,13 @@ type AppShowcaseProps = {
   steps: ShowcaseStep[];
   /** Sits under the step list, at the bottom of the pinned column. */
   footer?: ReactNode;
+  /**
+   * Which accent this walkthrough runs on. `indigo` is Blookd Rental's, for
+   * the workspace side of the product; everything that carries the accent —
+   * the rail, the numbers, the title wipe, the CTA, the lit mockup — swaps
+   * together because they all read the same variables.
+   */
+  accent?: "brand" | "indigo";
 };
 
 /**
@@ -47,9 +54,11 @@ export function AppShowcase({
   headingId,
   steps,
   footer,
+  accent = "brand",
 }: AppShowcaseProps) {
   const [active, setActive] = useState(0);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const listRef = useRef<HTMLOListElement | null>(null);
   const barRefs = useRef<(HTMLElement | null)[]>([]);
   const titleRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -89,6 +98,20 @@ export function AppShowcase({
       });
 
       setActive((prev) => (prev === next ? prev : next));
+      markListEdge();
+    };
+
+    // The step list scrolls inside the pinned column when the column runs out
+    // of height. Left unmarked its cut edge lands mid-word, which reads as
+    // broken rather than as "there is more" — so the fade goes on only while
+    // there is genuinely something below, and comes off once you reach the end.
+    const markListEdge = () => {
+      const list = listRef.current;
+      if (!list) return;
+      const remaining = list.scrollHeight - list.clientHeight - list.scrollTop;
+      // 4px, not 1: sub-pixel rounding should not put a fade on a list
+      // that is, for every practical purpose, fully visible.
+      list.dataset.moreBelow = remaining > 4 ? "true" : "false";
     };
 
     const onScroll = () => {
@@ -97,12 +120,15 @@ export function AppShowcase({
     };
 
     measure();
+    const list = listRef.current;
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    list?.addEventListener("scroll", markListEdge, { passive: true });
     return () => {
       if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      list?.removeEventListener("scroll", markListEdge);
     };
   }, [steps.length]);
 
@@ -111,22 +137,33 @@ export function AppShowcase({
   };
 
   return (
-    <div className="container-site">
+    <div className={cn("container-site", accent === "indigo" && "accent-indigo")}>
       <div className="flex flex-col gap-16 lg:flex-row lg:gap-[clamp(56px,8vw,150px)]">
         <div className="lg:w-[420px] lg:shrink-0">
           {/* The rail carries a line of copy per step, so the pinned column
               runs tall. It pins tight to the header (which ends at 75px) to buy
-              height, and takes a ceiling on top of that: a sticky block taller
-              than the screen would strand its own CTA off-screen for good on a
-              short viewport. Where it fits — most desktops — neither shows. */}
-          <div className="flex flex-col gap-6 lg:sticky lg:top-[100px] lg:max-h-[calc(100dvh-120px)] lg:overflow-y-auto lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden">
-            {eyebrow ? <Eyebrow className="self-start">{eyebrow}</Eyebrow> : null}
+              height, and takes a ceiling on top of that, because a sticky block
+              taller than the screen would strand its own end below the fold for
+              good.
 
-            <h2 id={headingId} className="text-display-2">
+              When it does hit that ceiling the STEP LIST is what gives way, not
+              the column: heading and CTA are shrink-0 and the list scrolls
+              inside them. Letting the whole column scroll instead put the CTA
+              last in line, so on any viewport short by even 30px the primary
+              action was silently sliced in half — and with the scrollbar hidden
+              there was nothing to say it had been. Nothing is lost when the
+              list scrolls: every step is also a card in the column beside it. */}
+          <div className="flex flex-col gap-6 lg:sticky lg:top-[100px] lg:max-h-[calc(100dvh-120px)]">
+            {eyebrow ? <Eyebrow className="self-start shrink-0">{eyebrow}</Eyebrow> : null}
+
+            <h2 id={headingId} className="text-display-2 lg:shrink-0">
               {heading}
             </h2>
 
-            <ol className="hidden flex-col lg:flex">
+            <ol
+              ref={listRef}
+              className="step-list hidden flex-col lg:flex lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:[-ms-overflow-style:none] lg:[scrollbar-width:none] lg:[&::-webkit-scrollbar]:hidden"
+            >
               {steps.map((step, i) => (
                 <li key={step.id} className="pb-5 last:pb-0">
                   <button
@@ -189,7 +226,7 @@ export function AppShowcase({
               ))}
             </ol>
 
-            {footer ? <div className="hidden lg:block">{footer}</div> : null}
+            {footer ? <div className="hidden lg:block lg:shrink-0">{footer}</div> : null}
           </div>
         </div>
 
@@ -216,12 +253,10 @@ export function AppShowcase({
                 <div
                   className={cn(
                     "transition-[filter] duration-700",
-                    // drop-shadow (not box-shadow) follows the actual painted
-                    // pixels of the mockup inside, so it hugs the phone's own
-                    // silhouette through its transparent PNG edges rather than
-                    // boxing this wrapper's full (wider) rectangle.
-                    i === active &&
-                      "drop-shadow-[0_0_40px_rgba(240,101,48,0.55)]",
+                    // See .showcase-glow in globals.css: it reads the accent
+                    // rather than naming a colour, so the halo follows whichever
+                    // brand this walkthrough is running on.
+                    i === active && "showcase-glow",
                   )}
                 >
                   {step.media}

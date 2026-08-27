@@ -86,18 +86,22 @@ export default function HomePage() {
             items={[
               {
                 title: "Discover.",
+                image: "/images/cards/discover.jpg",
                 body: "Browse professionals near you by service, style and the look you want.",
               },
               {
                 title: "Explore.",
+                image: "/images/cards/explore.jpg",
                 body: "Portfolios, pricing, availability and reviews, all on one profile.",
               },
               {
                 title: "Book.",
+                image: "/images/cards/book.jpg",
                 body: "Pick a time that suits you and book straight with your pro.",
               },
               {
                 title: "Come back.",
+                image: "/images/cards/come-back.jpg",
                 body: "Keep your favorites close so the next appointment takes seconds.",
               },
             ]}
@@ -178,14 +182,17 @@ export default function HomePage() {
             items={[
               {
                 title: "Get discovered.",
+                image: "/images/cards/get-discovered.jpg",
                 body: "Put your work in front of people looking for services like yours.",
               },
               {
                 title: "Get booked.",
+                image: "/images/cards/get-booked.jpg",
                 body: "Turn discovery into real appointments and keep your work moving.",
               },
               {
                 title: "Find your place.",
+                image: "/images/cards/find-your-place.jpg",
                 body: "Find flexible beauty workspaces that fit your schedule, services and way of working.",
               },
             ]}
@@ -259,18 +266,22 @@ export default function HomePage() {
             items={[
               {
                 title: "List your space.",
+                image: "/images/cards/list-your-space.jpg",
                 body: "Show professionals what makes your workspace worth booking.",
               },
               {
                 title: "Set your availability.",
+                image: "/images/cards/set-your-availability.jpg",
                 body: "Decide when the space is open and keep your schedule under control.",
               },
               {
                 title: "Connect with professionals.",
+                image: "/images/cards/connect-with-professionals.jpg",
                 body: "Reach beauty professionals actively looking for places to work.",
               },
               {
                 title: "Earn from unused space.",
+                image: "/images/cards/earn-from-unused-space.jpg",
                 body: "Make more of the chairs, rooms and stations you already have.",
               },
             ]}
@@ -278,8 +289,31 @@ export default function HomePage() {
         </div>
       </Band>
 
-      {/* S9 — statement */}
-      <Band tone="quiet" stacked size="tight">
+      {/* S9 — statement.
+
+          The photograph is composed for this exact job: the crew is bunched on
+          the right and the left half is empty studio, which is where the copy
+          goes. So it runs as a background rather than as a picture beside the
+          words.
+
+          From `md` only. Narrower than that the band is taller than it is
+          wide, the empty half crops away, and the copy ends up sitting on the
+          figures — dark type on dark clothing. Below md the section stays the
+          plain statement it was. */}
+      <Band tone="quiet" stacked size="tight" className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 hidden md:block">
+          <ParallaxImage
+            src="/images/independent-studio.jpg"
+            alt=""
+            // Half the default travel: the brief was a light drift, and this
+            // band is short enough that the usual 12% would read as a slide.
+            amount={6}
+            // Anchored right so the crop is taken off the empty studio floor
+            // instead of off the people.
+            objectPosition="right center"
+          />
+        </div>
+        <div className="relative z-10">
         <Statement
           lead="Independent doesn't mean doing it alone."
           tail={
@@ -295,6 +329,7 @@ export default function HomePage() {
             </>
           }
         />
+        </div>
       </Band>
 
       {/* S10 — human */}
@@ -318,18 +353,18 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-3">
             {[
               {
-                src: "/images/stylist-mirror.jpg",
-                alt: "A hair stylist at the mirror",
+                src: "/images/real-people.jpg",
+                alt: "An illustration of a stylist and her client, side by side",
                 label: "Real people",
               },
               {
-                src: "/images/nail-artist.jpg",
-                alt: "A nail artist working on a client",
+                src: "/images/real-talent.jpg",
+                alt: "An illustration of a braider's hands parting and plaiting hair",
                 label: "Real talent",
               },
               {
-                src: "/images/barber.jpg",
-                alt: "A barber at work in a studio",
+                src: "/images/real-places.jpg",
+                alt: "An illustration of a barber's chair, mirror and station",
                 label: "Real places",
               },
             ].map((item, i) => (
@@ -343,7 +378,7 @@ export default function HomePage() {
                     src={item.src}
                     alt={item.alt}
                     width={900}
-                    height={1100}
+                    height={900}
                     className="aspect-[4/5] w-full object-cover"
                   />
                 </div>

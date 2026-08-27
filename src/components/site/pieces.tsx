@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
-import { FlipCard } from "@/components/ui/flip-card";
+import { FeatureCard } from "@/components/ui/feature-card";
 import { cn } from "@/lib/utils";
 
 /** Three or four short claims, side by side. */
@@ -9,7 +9,7 @@ export function FeatureCards({
   columns = 3,
   className,
 }: {
-  items: { title: string; body: string; icon?: ReactNode }[];
+  items: { title: string; body: string; image?: string; icon?: ReactNode }[];
   columns?: 2 | 3 | 4;
   className?: string;
 }) {
@@ -25,7 +25,12 @@ export function FeatureCards({
     >
       {items.map((item, i) => (
         <Reveal key={item.title} delay={i * 70} as="article">
-          <FlipCard title={item.title} body={item.body} icon={item.icon} />
+          <FeatureCard
+            title={item.title}
+            body={item.body}
+            image={item.image}
+            icon={item.icon}
+          />
         </Reveal>
       ))}
     </div>

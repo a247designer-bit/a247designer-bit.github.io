@@ -60,9 +60,13 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* Brand — the orange is the only saturated colour on the site. */
+  /* Brand — the orange carries the site. The indigo is the second accent, and
+     it belongs to Blookd Rental: it is what the workspace side of the product
+     is coloured, so a section about renting space can wear it without the page
+     reading as two brands. */
   --color-brand: var(--brand);
   --color-brand-hi: var(--brand-hi);
+  --color-brand-2: var(--brand-2);
 
   /* Bands. Sections are flat colour blocks stacked with rounded top corners. */
   --color-paper: var(--paper);
@@ -108,6 +112,7 @@
 
   --brand: #dc4b14;
   --brand-hi: #f06530;
+  --brand-2: #6149ff;
 
   --background: var(--paper);
   --foreground: var(--ink);
@@ -262,6 +267,42 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+
+  /* Repoints the whole accent chain at the indigo for one subtree — the same
+     three variables :root and .dark set for the orange, so everything
+     downstream (the rail, the step numbers, the title wipe, the CTA gradient,
+     the focus ring) follows without any of them naming a colour.
+
+     Unlike the orange it does NOT lighten on dark bands: #6149ff is the value
+     the brand specifies, and at 19px display bold it clears the 3:1 large-text
+     threshold on #1a1a1a as it stands. The gradient's top stop is mixed rather
+     than given a second hex, so the button keeps its dimensionality while
+     still reading as the one colour. */
+  .accent-indigo {
+    --brand: var(--brand-2);
+    --brand-hi: color-mix(in oklab, var(--brand-2) 88%, white);
+    --primary: var(--brand-2);
+    --ring: var(--brand-2);
+  }
+
+  /* The step list fades out at its cut edge while it still has steps below it.
+     data-more-below is written by <AppShowcase>, so the fade is never on when
+     the list fits (most desktops) or once you have reached its end — a
+     permanent fade would dim the last step for no reason. */
+  .step-list[data-more-below="true"] {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+  }
+
+  /* The lit mockup's halo. drop-shadow (not box-shadow) so it follows the
+     painted pixels of the screen inside rather than boxing its wrapper, and it
+     reads --primary so it changes colour with the section's accent instead of
+     carrying a hard-coded orange. */
+  .showcase-glow {
+    filter: drop-shadow(
+      0 0 40px color-mix(in oklab, var(--primary) 55%, transparent)
+    );
   }
 
   /* The page has to close on a card, not on a cut edge. Bands only round their
