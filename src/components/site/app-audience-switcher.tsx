@@ -141,25 +141,22 @@ const ICONS = [
 /**
  * The mockups, shot straight on rather than in isometric.
  *
- * `accent` is the halo each one is lit with while it is the app being talked
- * about — the same `.showcase-glow` the walkthroughs use, so a phone reads as
- * "this is the one" here the same way it does on the product pages. The two
- * values are the two brand accents, and the indigo arrives as `.accent-indigo`
- * rather than as a colour: the glow reads `--primary`, so repointing the token
- * is what turns it, exactly as the Rental walkthrough does it.
+ * They used to be lit with the brand halo the product-page walkthroughs use,
+ * one accent each. That reading is gone from this block: the tabs above now
+ * carry the app's colour, and having the phone glow it as well said the same
+ * thing twice over an already busy band. Which phone is being talked about is
+ * still legible from its scale and from the blur on the other one.
  */
 const PHONES = [
   {
     key: "blookd" as const,
     src: "/images/app-phone-blookd-2.png",
     alt: "The Blookd app showing top rated providers near you",
-    accent: "",
   },
   {
     key: "rental" as const,
     src: "/images/app-phone-rental-2.png",
     alt: "The Blookd Rental app showing workspaces available in Denver",
-    accent: "accent-indigo",
   },
 ];
 
@@ -175,50 +172,40 @@ const PHONES = [
  * is retuned.
  */
 /**
- * The same three states, laid out for a phone.
+ * The stage, laid out for a phone.
  *
- * Above md the stage is an absolute canvas and the figures are placed on it by
- * percentage. There is no room for that below md, so it collapses to a flex
- * row — but a row, not the column it used to be. Stacked, one mockup ate the
- * whole viewport height before a word of the copy appeared.
+ * Above md it is an absolute canvas and the figures are placed on it by
+ * percentage. There is no room for that below md, so it collapses to the same
+ * shape in all three states: the copy takes the full width, the mockups sit in
+ * a row underneath it.
  *
- * Which side the copy takes is inherited from the desktop placement, so the
- * two layouts stay recognisably the same picture: the copy sits where the
- * prominent mockup is not. People keeps its phone on the left and hosts on the
- * right, exactly as COPY_PLACEMENT puts them at 70% and 30%.
- *
- * Professionals is the exception, and it is the reason this is a wrap rather
- * than a row: it is the one state carrying two phones, and two phones plus
- * copy across 327px would leave the words about 100px to live in. So the copy
- * takes the full width above and the pair sits underneath it.
+ * The copy used to take the side the prominent mockup left free, mirroring the
+ * desktop placement. It only had ~150px to say anything in, which is where the
+ * three-phone state had already refused to go — professionals carries two
+ * mockups and had the copy above them for exactly this reason. Sending the
+ * other two the same way costs the mirrored composition and buys every state
+ * the full 327px for its words.
  *
  * 40% is the halved mockup — 260px on the old stacked layout, ~131px here —
- * and professionals holds the same 40% rather than splitting the row in two,
- * so a phone is the same size whichever tab you are on.
- *
- * Whole class strings, not assembled ones: Tailwind finds classes by scanning
- * source text, so `w-[${n}%]` would never generate a rule.
+ * and it is 40% in every state, so a phone is the same size whichever tab you
+ * are on.
  */
-const MOBILE_LAYOUT: Record<
-  AudienceId,
-  { copy: string; blookd: string; rental: string }
-> = {
-  people: {
-    copy: "order-2 min-w-0 flex-1",
-    blookd: "order-1 w-[40%]",
-    rental: "hidden",
-  },
-  professionals: {
-    copy: "order-1 w-full",
-    blookd: "order-2 w-[40%]",
-    rental: "order-3 w-[40%]",
-  },
-  hosts: {
-    copy: "order-1 min-w-0 flex-1",
-    blookd: "hidden",
-    rental: "order-2 w-[40%]",
-  },
+/**
+ * The colour the active tab is lit in — the app that tab is about.
+ *
+ * People and professionals both open an orange-marked app, hosts open Rental,
+ * so hosts is the only one that turns. Lightened well past --brand-2 itself:
+ * at full strength the indigo is darker than the band it sits on and reads as
+ * a hole rather than as a highlight.
+ */
+const TAB_TINT: Record<AudienceId, string> = {
+  people: "var(--primary)",
+  professionals: "var(--primary)",
+  hosts: "color-mix(in oklab, var(--brand-2) 62%, white)",
 };
+
+const MOBILE_COPY = "order-1 w-full";
+const MOBILE_PHONE = "order-2 w-[40%]";
 
 const PHONE_WIDTH = "md:w-[calc(var(--stage-h)*0.372)]";
 
@@ -242,14 +229,27 @@ export function AppAudienceSwitcher() {
         // which is the difference between fitting and being seen to fit.
         className="relative -mx-2 grid w-[calc(100%+1rem)] grid-cols-3 rounded-full bg-black/25 p-1 ring-1 ring-inset ring-white/10 md:mx-auto md:w-full md:max-w-[420px]"
       >
-        {/* Held off pure white on purpose. At full white the pill is the
-            brightest thing on the page and pulls rank on the mockups it is
-            only meant to index; letting the band's own green through at 20%
-            keeps it clearly active without shouting. */}
+        {/* A wash of the app's own colour rather than a white slab. The white
+            pill was the brightest thing on the page and pulled rank on the
+            mockups it is only meant to index; at a fifth strength the tint
+            marks the tab without competing, and the label carries the state in
+            weight instead of in contrast.
+
+            Colour is inline because it changes with the state and the shade is
+            mixed from it three ways. It transitions alongside the slide, so
+            moving from professionals to hosts is one movement that also turns
+            orange into lilac. */}
         <span
           aria-hidden
-          className="absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-full bg-white/80 shadow-[0_1px_6px_rgba(0,0,0,0.2)] transition-transform duration-500 ease-[var(--ease-out)]"
-          style={{ transform: `translateX(${activeIndex * 100}%)` }}
+          className="absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/3)] rounded-full transition-[transform,background-color,box-shadow] duration-500 ease-[var(--ease-out)]"
+          style={{
+            transform: `translateX(${activeIndex * 100}%)`,
+            backgroundColor: `color-mix(in oklab, ${TAB_TINT[active]} 20%, transparent)`,
+            boxShadow: [
+              `0 0 18px color-mix(in oklab, ${TAB_TINT[active]} 30%, transparent)`,
+              `inset 0 0 0 1px color-mix(in oklab, ${TAB_TINT[active]} 45%, transparent)`,
+            ].join(", "),
+          }}
         />
         {AUDIENCES.map((audience) => (
           <button
@@ -263,7 +263,7 @@ export function AppAudienceSwitcher() {
             className={cn(
               "relative z-10 rounded-full px-1.5 py-2.5 text-[14px] transition-colors duration-300 md:px-3 md:text-[15px]",
               audience.id === active
-                ? "text-[#0f1b16]"
+                ? "font-bold text-white"
                 : "text-white/65 hover:text-white",
             )}
           >
@@ -289,10 +289,10 @@ export function AppAudienceSwitcher() {
               key={phone.key}
               className={cn(
                 "transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
-                // Below md: which side of the row it takes and how wide it is.
-                // The map also drops the app this audience does not open — the
-                // same phones the desktop stage merely dims.
-                MOBILE_LAYOUT[active][phone.key],
+                MOBILE_PHONE,
+                // Below md only the app this audience actually opens is shown;
+                // the desktop stage merely dims the other one.
+                !place.lifted && "hidden md:block",
                 "md:absolute md:top-[44%] md:block md:w-auto md:max-w-none md:-translate-x-1/2 md:-translate-y-1/2 md:scale-[var(--s)]",
                 PHONE_WIDTH,
                 "md:blur-[var(--b)] md:opacity-[var(--o)]",
@@ -307,27 +307,20 @@ export function AppAudienceSwitcher() {
                 } as CSSProperties
               }
             >
-              {/* The halo gets its own element rather than going on the wrapper
-                  above: that one is already carrying `blur` and `opacity`, and
-                  `.showcase-glow` writes `filter` outright, so the two would be
-                  fighting over the same property. Nested, they compose — the
-                  phone that has dropped back keeps its blur AND loses its
-                  light, which is the whole point of the dimmed state. */}
-              <div
-                className={cn(
-                  "transition-[filter] duration-700",
-                  place.lifted && "showcase-glow",
-                  phone.accent,
-                )}
-              >
-                <Image
-                  src={phone.src}
-                  alt={place.lifted ? phone.alt : ""}
-                  width={886}
-                  height={1812}
-                  className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-                />
-              </div>
+              {/* No halo. The nested element that used to carry
+                  `.showcase-glow` went with it — it only existed because the
+                  glow writes `filter` and the wrapper above is already using
+                  that property for the dimmed state's blur.
+
+                  The cast shadow stays: it is what sets the mockup on the band
+                  rather than lighting it, and without it the phone floats. */}
+              <Image
+                src={phone.src}
+                alt={place.lifted ? phone.alt : ""}
+                width={886}
+                height={1812}
+                className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+              />
             </div>
           );
         })}
@@ -379,7 +372,7 @@ export function AppAudienceSwitcher() {
             rather than as spilled. */}
         <div
           className={cn(
-            MOBILE_LAYOUT[active].copy,
+            MOBILE_COPY,
             "transition-[left,width] duration-700 ease-[var(--ease-out)]",
             "md:absolute md:top-[44%] md:z-30 md:w-[var(--cw)] md:-translate-x-1/2 md:-translate-y-1/2",
           )}
