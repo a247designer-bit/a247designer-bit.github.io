@@ -1,0 +1,343 @@
+"use client";
+
+import { useId, useRef, useState } from "react";
+import { Dialog, VisuallyHidden } from "radix-ui";
+import { X } from "lucide-react";
+
+import { CtaSecondaryButton } from "@/components/site/cta";
+import { cn } from "@/lib/utils";
+
+/** Where the waitlist signup is delivered. Shown to the reader when sending fails. */
+const WAITLIST_INBOX = "support@blookd.com";
+
+/**
+ * The form relay.
+ *
+ * This site is a static export on GitHub Pages (see next.config.ts) — no server,
+ * so a signup can only reach an inbox through a relay. FormSubmit was chosen by
+ * the site owner.
+ *
+ * `/ajax/` rather than the plain endpoint: the plain one answers with a redirect
+ * to its own thank-you page, which would take the visitor off the site and make
+ * the success and failure states below unreachable. The ajax endpoint answers
+ * with JSON and CORS headers, so the sheet can report the outcome itself.
+ *
+ * TWO THINGS TO KNOW.
+ *
+ * FormSubmit needs activating once: the first real submission sends a
+ * confirmation mail to WAITLIST_INBOX, and nothing is delivered until someone
+ * opens it and clicks through. Submit the form once from the live site and
+ * confirm from that inbox.
+ *
+ * The address is in the URL, so it ships in the JS bundle and will be
+ * harvested. After activating, FormSubmit issues a random alias for the same
+ * inbox — swap the address here for that alias and the address stops being
+ * public. Nothing else changes.
+ */
+const WAITLIST_ENDPOINT = `https://formsubmit.co/ajax/${WAITLIST_INBOX}`;
+
+type Status = "idle" | "sending" | "sent" | "error";
+
+/** Deliberately loose. The only wrong answer here is a rejected real address. */
+const looksLikeEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+
+export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const nameId = useId();
+  const emailId = useId();
+  const noticeId = useId();
+  const honeypot = useRef<HTMLInputElement>(null);
+
+  const sending = status === "sending";
+  const done = status === "sent";
+
+  function reset() {
+    setName("");
+    setEmail("");
+    setStatus("idle");
+    setError(null);
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (sending) return;
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedName) {
+      setError("Tell us what to call you.");
+      setStatus("error");
+      return;
+    }
+    if (!looksLikeEmail(trimmedEmail)) {
+      setError("That email address doesn't look right.");
+      setStatus("error");
+      return;
+    }
+
+    // A filled honeypot is a bot: the field is off-screen and unlabelled, so
+    // nothing driving this with eyes and a pointer will ever put anything in
+    // it. Dropped silently — telling a scraper it was caught only teaches it.
+    if (honeypot.current?.value) {
+      setStatus("sent");
+      return;
+    }
+
+    setError(null);
+    setStatus("sending");
+
+    try {
+      const response = await fetch(WAITLIST_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          _subject: `Blookd waitlist — ${trimmedName}`,
+          // FormSubmit otherwise interrupts with its own captcha page, which an
+          // ajax POST cannot show and the visitor would only see as a failure.
+          _captcha: "false",
+          _template: "table",
+        }),
+      });
+
+      // FormSubmit answers 200 for refusals as well as for deliveries — an
+      // unconfirmed address, a rate limit — with the reason in the body. Going
+      // on `response.ok` alone would report those as delivered, which is the
+      // one failure mode a waitlist cannot have.
+      const payload: unknown = await response.json().catch(() => null);
+      const success =
+        payload && typeof payload === "object" && "success" in payload
+          ? String((payload as { success: unknown }).success) === "true"
+          : response.ok;
+
+      if (!success) {
+        const message =
+          payload && typeof payload === "object" && "message" in payload
+            ? String((payload as { message: unknown }).message)
+            : `Request failed (${response.status}).`;
+        throw new Error(message);
+      }
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+      setError(
+        `We couldn't send that. Try again, or email us at ${WAITLIST_INBOX}.`,
+      );
+    }
+  }
+
+  return (
+    <Dialog.Root
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        // Reset on the way out, not the way in: the close is animated, and
+        // clearing while it is still on screen shows the form emptying itself.
+        if (!next) window.setTimeout(reset, 250);
+      }}
+    >
+      <Dialog.Trigger asChild>
+        <CtaSecondaryButton>{label}</CtaSecondaryButton>
+      </Dialog.Trigger>
+
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/45 backdrop-blur-[6px] data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:duration-300" />
+
+        {/* Anchored to the bottom of the viewport, centred on it, exactly as
+            the reference does: the sheet rises from the edge nearest the thumb
+            and the close sits above it rather than inside, so the card is only
+            ever the form. `max-h` plus scroll keeps it whole on a short screen
+            in landscape, where a bottom sheet is otherwise the first thing to
+            get cut. */}
+        <Dialog.Content
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-[60] mx-auto flex w-full max-w-[440px] flex-col items-center px-4 pb-4",
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-bottom-4",
+            "data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom-6 data-[state=open]:duration-400",
+          )}
+        >
+          <Dialog.Close
+            className="mb-4 grid size-12 place-items-center rounded-[14px] bg-white text-[#111] shadow-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:scale-95 motion-reduce:transition-none"
+            aria-label="Close"
+          >
+            <X className="size-5" strokeWidth={2.5} />
+          </Dialog.Close>
+
+          {/* The sheet keeps its own light palette whatever band it was opened
+              from — it sits over a blurred page, not on it, and a panel that
+              changed colour with whatever was behind it would read as part of
+              the page rather than in front of it. */}
+          <div className="max-h-[80svh] w-full overflow-y-auto rounded-[24px] bg-white p-7 text-[#111] md:p-8">
+            <Dialog.Title className="font-display text-[30px] leading-[1.1] tracking-[-0.03em]">
+              You&apos;re invited to Blookd
+            </Dialog.Title>
+            <p className="mt-2 text-[16px] leading-[1.45] text-black/55">
+              Get early access and be the first to book with independent beauty
+              professionals near you.
+            </p>
+
+            {done ? (
+              <div className="mt-8">
+                <p className="text-[17px] leading-[1.45] font-medium">
+                  You&apos;re on the list.
+                </p>
+                <p className="mt-2 text-[15px] leading-[1.5] text-black/55">
+                  We&apos;ll email {email.trim()} the moment early access opens.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Dialog.Close className="inline-flex min-h-11 items-center rounded-[10px] bg-[#111] px-5 text-[15px] font-medium text-white transition-opacity hover:opacity-90">
+                    Done
+                  </Dialog.Close>
+                  <button
+                    type="button"
+                    onClick={reset}
+                    className="inline-flex min-h-11 items-center rounded-[10px] px-2 text-[15px] text-black/55 underline underline-offset-4 transition-colors hover:text-black"
+                  >
+                    Add someone else
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate className="mt-7">
+                {/* FormSubmit's honeypot. Positioned off-screen rather than
+                    hidden with `display:none` or `type="hidden"` — a bot that
+                    reads the stylesheet skips both, and this one it has to fill
+                    to look like it filled the form. `tabIndex={-1}` and
+                    aria-hidden keep it away from anyone using the keyboard or a
+                    screen reader. */}
+                <input
+                  ref={honeypot}
+                  type="text"
+                  name="_honey"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden
+                  className="absolute left-[-9999px] size-px opacity-0"
+                />
+                <Field
+                  id={nameId}
+                  label="Your first name"
+                  placeholder="First Name"
+                  value={name}
+                  autoComplete="given-name"
+                  onChange={setName}
+                  disabled={sending}
+                />
+                <Field
+                  id={emailId}
+                  label="Your e-mail"
+                  placeholder="E-mail"
+                  type="email"
+                  value={email}
+                  autoComplete="email"
+                  onChange={setEmail}
+                  disabled={sending}
+                  invalid={status === "error" && !looksLikeEmail(email.trim())}
+                  describedBy={status === "error" ? noticeId : undefined}
+                />
+
+                {/* aria-live so the outcome is announced, and rendered as a
+                    reserved slot rather than injected — a message that appears
+                    out of nowhere pushes the button out from under the finger
+                    that was about to press it again. */}
+                <p
+                  id={noticeId}
+                  role="status"
+                  aria-live="polite"
+                  className={cn(
+                    "mt-4 min-h-5 text-[14px] leading-[1.4]",
+                    status === "error" ? "text-[#c0341a]" : "text-transparent",
+                  )}
+                >
+                  {error ?? " "}
+                </p>
+
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="mt-2 inline-flex h-14 w-full items-center justify-center rounded-[14px] bg-[#111] text-[17px] font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60 disabled:hover:opacity-60"
+                >
+                  {sending ? "Sending…" : "Join the waitlist"}
+                </button>
+
+                <p className="mt-4 text-center text-[14px] text-black/45">
+                  By signing up, you&apos;re agreeing to our{" "}
+                  <a
+                    href="/terms-conditions/"
+                    className="underline underline-offset-2 hover:text-black"
+                  >
+                    terms
+                  </a>
+                  .
+                </p>
+              </form>
+            )}
+          </div>
+
+          <VisuallyHidden.Root>
+            <Dialog.Description>
+              Join the Blookd waitlist with your first name and email address.
+            </Dialog.Description>
+          </VisuallyHidden.Root>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+/** Label above, filled field below — the reference's shape, on our tokens. */
+function Field({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+  type = "text",
+  autoComplete,
+  disabled,
+  invalid,
+  describedBy,
+}: {
+  id: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  autoComplete?: string;
+  disabled?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+}) {
+  return (
+    <div className="mb-5">
+      <label htmlFor={id} className="block text-[15px] text-black/45">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        disabled={disabled}
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy}
+        onChange={(event) => onChange(event.target.value)}
+        className={cn(
+          "mt-2 h-14 w-full rounded-[14px] bg-black/[0.05] px-4 text-[17px] text-[#111] outline-none",
+          "placeholder:text-black/40",
+          "focus-visible:ring-2 focus-visible:ring-[#111]/30",
+          "disabled:opacity-60",
+          invalid && "ring-2 ring-[#c0341a]/50",
+        )}
+      />
+    </div>
+  );
+}

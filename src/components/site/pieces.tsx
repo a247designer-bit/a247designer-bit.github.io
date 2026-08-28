@@ -7,10 +7,13 @@ import { cn } from "@/lib/utils";
 export function FeatureCards({
   items,
   columns = 3,
+  tintedAtRest = false,
   className,
 }: {
   items: { title: string; body: string; image?: string; icon?: ReactNode }[];
   columns?: 2 | 3 | 4;
+  /** Passed straight through: see FeatureCard. Set per row, not per card. */
+  tintedAtRest?: boolean;
   className?: string;
 }) {
   return (
@@ -30,6 +33,7 @@ export function FeatureCards({
             body={item.body}
             image={item.image}
             icon={item.icon}
+            tintedAtRest={tintedAtRest}
           />
         </Reveal>
       ))}

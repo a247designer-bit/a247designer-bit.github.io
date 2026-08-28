@@ -39,7 +39,12 @@ export function AppBadgeButton({
     <Link
       href={href}
       className={cn(
-        "group relative isolate flex items-center gap-3 overflow-hidden rounded-full",
+        // 12px, not a full pill. At `rounded-full` the badge had no corner of
+        // its own and read as a lozenge stuck to the page; a soft rectangle
+        // sits in the same family as the cards and bands it floats over.
+        // `overflow-hidden` means the hover sweep is clipped to this radius
+        // too, so the light turns the same corners the badge does.
+        "group relative isolate flex items-center gap-3 overflow-hidden rounded-[12px]",
         // Ink rather than the brand orange or the reference's indigo: this
         // badge carries a different app on different pages — Blookd's orange
         // mark on two, Rental's indigo on the other two — and a neutral ground

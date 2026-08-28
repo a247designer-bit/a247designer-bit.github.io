@@ -205,6 +205,51 @@ export function CtaSecondary({ className, children, ...props }: CtaProps) {
   );
 }
 
+/**
+ * CtaSecondary's twin for the one CTA on the site that does not navigate.
+ *
+ * Every other CTA here is a `Link`, deliberately — a button that navigates
+ * loses middle-click and open-in-new-tab. This one opens a dialog on the page
+ * you are already on, so it has to be a real `button`: an anchor with no
+ * destination is a link that lies to the keyboard and to the status bar.
+ *
+ * `useOriginFill` is generic over the element, so the fill mechanic is the
+ * same object, not a second implementation that will drift.
+ */
+export function CtaSecondaryButton({
+  className,
+  children,
+  ...props
+}: Omit<React.ComponentProps<typeof motion.button>, "children"> & {
+  children?: React.ReactNode;
+}) {
+  const { nodeRef, showFill, origin, coverSize, handlers, transition } =
+    useOriginFill<HTMLButtonElement>();
+  return (
+    <motion.button
+      type="button"
+      {...props}
+      {...handlers}
+      ref={nodeRef}
+      whileTap={{ scale: 0.985 }}
+      style={{ color: showFill ? "var(--ink)" : undefined }}
+      className={cn(BASE, "bg-foreground text-background", className)}
+    >
+      <Fill
+        show={showFill}
+        size={coverSize}
+        x={origin.x}
+        y={origin.y}
+        transition={transition}
+        className="bg-background"
+      />
+      <span className="relative z-10 inline-flex items-center justify-center gap-2">
+        {children}
+      </span>
+    </motion.button>
+  );
+}
+
 export function CtaQuiet({ className, children, ...props }: CtaProps) {
   const { nodeRef, showFill, origin, coverSize, handlers, transition } =
     useOriginFill<HTMLAnchorElement>();

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CalendarDays, Compass, Heart, Search } from "lucide-react";
 
 import { Band } from "@/components/site/band";
+import { FaqSection } from "@/components/site/faq";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { SpotlightSearch } from "@/components/ui/spotlight-search";
@@ -10,6 +11,8 @@ import { Statement } from "@/components/site/pieces";
 import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary } from "@/components/site/cta";
 import { Reveal } from "@/components/motion/reveal";
+import { WaitlistDialog } from "@/components/site/waitlist-dialog";
+import { SERVICES_FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -24,7 +27,15 @@ export default function ServicesPage() {
         eyebrow="Blookd · Beauty services"
         title="Find the right pro."
         lede="Discover beauty and wellness professionals whose work fits your style, needs and schedule."
-        actions={<CtaPrimary href="/">Get Blookd</CtaPrimary>}
+        actions={
+          <>
+            <CtaPrimary href="/">Get Blookd</CtaPrimary>
+            {/* Services only, for now. The waitlist is one offer and one
+                inbox; repeating it on every page would turn a single ask into
+                background noise. */}
+            <WaitlistDialog />
+          </>
+        }
         media={
           <div className="overflow-hidden rounded-[28px]">
             <Image
@@ -178,6 +189,17 @@ export default function ServicesPage() {
           </Reveal>
         </div>
       </Band>
+
+      {/* FAQ. Last band on the page and quiet against the paper CTA
+          above it, so the rhythm carries on and the rounded bottom edge
+          that closes every page lands here. */}
+      <FaqSection
+        id="services-faq"
+        eyebrow="Questions"
+        heading="Booking, in short."
+        lede="The things people ask before their first appointment. Anything else, and a person will answer it."
+        items={SERVICES_FAQ}
+      />
     </>
   );
 }

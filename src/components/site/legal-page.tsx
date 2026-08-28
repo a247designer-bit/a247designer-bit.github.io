@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
@@ -63,6 +65,29 @@ export function LegalPage({
 }
 
 /**
+ * A document that lives as a file rather than as JSX.
+ *
+ * Terms and Privacy run to 12,800 and 3,400 words. Transcribed into JSX they
+ * would be the two largest source files in the repo and every future edit
+ * would be a diff through markup. They sit in `src/content/legal/` as plain
+ * HTML instead, converted once from the published documents and reduced to the
+ * handful of tags the shell above styles — p, h2, h3, ul, li, strong, em, a.
+ * No class, style or script attribute survived that conversion, which is what
+ * makes setting the markup directly safe here.
+ *
+ * Read at build time: every route on this site prerenders (see next.config.ts),
+ * so `fs` runs on the build machine and the file never reaches the browser as
+ * anything but the finished HTML.
+ */
+export function LegalDocument({ file }: { file: string }) {
+  const html = readFileSync(
+    join(process.cwd(), "src/content/legal", `${file}.html`),
+    "utf8",
+  );
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+/**
  * Stands in until the real document is supplied.
  *
  * Deliberately says that the text is not here yet and sends the reader to the
@@ -74,22 +99,8 @@ export function LegalPending({ document }: { document: string }) {
     <p>
       The {document} is being finalised and will be published here. In the
       meantime the agreement in force is set out in our{" "}
-      <Link
-        href="https://www.blookd.com/terms-conditions"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Terms and Conditions
-      </Link>{" "}
-      and{" "}
-      <Link
-        href="https://www.blookd.com/privacy-policy"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Privacy Policy
-      </Link>
-      .
+      <Link href="/terms-conditions">Terms and Conditions</Link> and{" "}
+      <Link href="/privacy-policy">Privacy Policy</Link>.
     </p>
   );
 }

@@ -83,25 +83,29 @@ export default function HomePage() {
         <div className="container-site mt-16 md:mt-24">
           <FeatureCards
             columns={4}
+            // All three card rows keep a third of their colour at rest. The
+            // hover still goes to the full picture, so the reveal keeps its
+            // distance to travel — see FeatureCard for the measurement.
+            tintedAtRest
             items={[
               {
                 title: "Discover.",
-                image: "/images/cards/discover.jpg",
+                image: "/images/cards/discover-2.jpg",
                 body: "Browse professionals near you by service, style and the look you want.",
               },
               {
                 title: "Explore.",
-                image: "/images/cards/explore.jpg",
+                image: "/images/cards/explore-2.jpg",
                 body: "Portfolios, pricing, availability and reviews, all on one profile.",
               },
               {
                 title: "Book.",
-                image: "/images/cards/book.jpg",
+                image: "/images/cards/book-2.jpg",
                 body: "Pick a time that suits you and book straight with your pro.",
               },
               {
                 title: "Come back.",
-                image: "/images/cards/come-back.jpg",
+                image: "/images/cards/come-back-2.jpg",
                 body: "Keep your favorites close so the next appointment takes seconds.",
               },
             ]}
@@ -118,7 +122,18 @@ export default function HomePage() {
         className="relative overflow-hidden py-0 md:py-0"
       >
         <div className="relative aspect-square w-full sm:aspect-[2145/803]">
-          <ParallaxImage src="/in-center-3.jpg" alt="" />
+          {/* Two crops, because this band changes shape at `sm`: a 2145x803
+              panorama in the square hole below it kept a third of its width
+              and cut the barber out of his own picture. The square file is the
+              same scene recomposed for that hole. The breakpoint here is the
+              one on the container above — they have to be the same number or
+              the shape and the file disagree on one viewport. */}
+          <ParallaxImage
+            src="/in-center-3.jpg"
+            mobileSrc="/in-center-mobile.jpg"
+            mobileUpTo={639}
+            alt=""
+          />
           <div className="container-site relative z-10 flex h-full flex-col justify-center">
             <Reveal>
               <p className="mx-auto max-w-[20ch] text-center font-display text-display-2 text-white">
@@ -179,20 +194,21 @@ export default function HomePage() {
 
         <div className="container-site mt-16 md:mt-24">
           <FeatureCards
+            tintedAtRest
             items={[
               {
                 title: "Get discovered.",
-                image: "/images/cards/get-discovered.jpg",
+                image: "/images/cards/get-discovered-2.jpg",
                 body: "Put your work in front of people looking for services like yours.",
               },
               {
                 title: "Get booked.",
-                image: "/images/cards/get-booked.jpg",
+                image: "/images/cards/get-booked-2.jpg",
                 body: "Turn discovery into real appointments and keep your work moving.",
               },
               {
                 title: "Find your place.",
-                image: "/images/cards/find-your-place.jpg",
+                image: "/images/cards/find-your-place-2.jpg",
                 body: "Find flexible beauty workspaces that fit your schedule, services and way of working.",
               },
             ]}
@@ -263,6 +279,7 @@ export default function HomePage() {
         <div className="container-site mt-16 md:mt-24">
           <FeatureCards
             columns={4}
+            tintedAtRest
             items={[
               {
                 title: "List your space.",
@@ -291,29 +308,55 @@ export default function HomePage() {
 
       {/* S9 — statement.
 
-          The photograph is composed for this exact job: the crew is bunched on
-          the right and the left half is empty studio, which is where the copy
-          goes. So it runs as a background rather than as a picture beside the
-          words.
+          The photograph is composed for this exact job: one figure stands in
+          the right quarter and everything left of her is empty floor, which is
+          where the copy goes. So it runs as a background rather than as a
+          picture beside the words.
 
-          From `md` only. Narrower than that the band is taller than it is
-          wide, the empty half crops away, and the copy ends up sitting on the
-          figures — dark type on dark clothing. Below md the section stays the
-          plain statement it was. */}
-      <Band tone="quiet" stacked size="tight" className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 hidden md:block">
+          The band is given the photograph's own proportions at `md` and up
+          rather than being sized by its copy. She occupies 72% of the frame's
+          height, so any band shorter than that crops her — at the 472px the
+          text alone asked for she loses her legs and the long diagonal shadow
+          that is the point of the picture. 52vw is the height at which
+          `object-cover` stops cropping vertically at ANY width: the 12%
+          parallax overscan takes the container to 58.2vw, past the 56.3vw the
+          image covers to, so the crop is only ever the 3.5% taken off the left
+          edge — empty floor. The copy centres in the room that leaves.
+
+          The overlay is `lg` and up only. The figure stands at 74% of the
+          frame, and `object-cover` walks her leftwards as the band narrows: at
+          768px she starts at x=544 while the trailing paragraph still runs to
+          657, so the copy sits on her — dark type on a dark boot. At 1024 the
+          two clear each other.
+
+          Below that the picture goes UNDER the words rather than behind them,
+          in the portrait crop made for it. Overlaying that crop was measured
+          and does not work: on a 390px screen the copy crosses her at
+          1.00:1 — the same colour as what it is written on — and even the
+          clear left third only reaches 3.60:1 for the trailing paragraph,
+          because her shadow runs across it. Capping the copy to the clear
+          strip would leave a 200px column. Stacked, the picture is whole, the
+          copy is on the band's own ground, and neither is compromised to
+          rescue the other. */}
+      <Band
+        tone="quiet"
+        stacked
+        size="tight"
+        className="relative overflow-hidden lg:flex lg:min-h-[52vw] lg:items-center"
+      >
+        <div className="pointer-events-none absolute inset-0 hidden lg:block">
           <ParallaxImage
-            src="/images/independent-studio.jpg"
+            src="/images/not-alone.jpg"
             alt=""
             // Half the default travel: the brief was a light drift, and this
             // band is short enough that the usual 12% would read as a slide.
             amount={6}
-            // Anchored right so the crop is taken off the empty studio floor
-            // instead of off the people.
+            // Anchored right so the crop is taken off the empty floor instead
+            // of off the figure.
             objectPosition="right center"
           />
         </div>
-        <div className="relative z-10">
+        <div className="relative z-10 w-full">
         <Statement
           lead="Independent doesn't mean doing it alone."
           tail={
@@ -328,6 +371,23 @@ export default function HomePage() {
               around the way modern beauty work actually happens.
             </>
           }
+        />
+
+        {/* Held to 360px and centred rather than run full-bleed. A 0.566
+            portrait at the full width of the band is 689px tall on a phone but
+            1357 at 768 and 1807 by the time `lg` takes over — a picture that
+            grows to two screens as the screen gets bigger. Capping the width is
+            what keeps it one object at every size below `lg`, and it is never
+            cropped to get there.
+
+            Rounded like every other media block on the site, because at this
+            size that is what it now is. */}
+        <Image
+          src="/images/not-alone-mobile.jpg"
+          alt="An independent beauty professional standing in an empty studio"
+          width={531}
+          height={938}
+          className="mx-auto mt-12 h-auto w-full max-w-[360px] rounded-[28px] lg:hidden"
         />
         </div>
       </Band>
@@ -441,7 +501,7 @@ export default function HomePage() {
                 body: "Discover talent. Get discovered. Book services. Build relationships.",
                 cta: "Get Blookd",
                 href: "/services",
-                image: "/images/app-card-blookd.jpg",
+                image: "/images/app-card-blookd-2.jpg",
               },
               {
                 name: "Blookd Rental",

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Link as LinkIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Smartphone } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /**
@@ -13,8 +12,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * percentage) with no honest value for the steps this renders — Blookd's
  * network doesn't have a "60% energy" or an "in progress" state, and
  * inventing one to fill the expanded card would be exactly the kind of
- * decorative noise this project avoids elsewhere. What's kept — title,
- * content and the connected-node cross-links — all comes from real copy.
+ * decorative noise this project avoids elsewhere.
+ *
+ * The source's cross-link buttons are gone too. They jumped the orbit to a
+ * neighbouring node, which the ring already draws for you; the expanded card
+ * now names the app the step is actually done in instead, which is the one
+ * thing the diagram cannot show.
  *
  * Also dropped: the unused `viewMode` state (declared, set once at
  * construction, never changed — dead state in the source component).
@@ -25,13 +28,31 @@ const round = (value: number, decimals: number) => {
   return Math.round(value * factor) / factor;
 };
 
+/**
+ * Which app you are actually holding while you do this step.
+ *
+ * `tone` rather than a colour, and the same two the app switcher uses: Blookd
+ * and Blookd Biz are one product family off the orange mark, Blookd Rental is
+ * the indigo one. A step can name more than one — booking happens in Blookd
+ * and lands in Blookd Biz, and saying only one of those would be half the
+ * sentence.
+ */
+export type OrbitalApp = { name: string; tone: "blookd" | "rental" };
+
 export interface OrbitalTimelineItem {
   id: number;
   title: string;
   content: string;
   icon: React.ElementType;
+  /** Drives the orbit's relation lines and the pulse on connected nodes. */
   relatedIds: number[];
+  apps: OrbitalApp[];
 }
+
+const APP_TONE: Record<OrbitalApp["tone"], string> = {
+  blookd: "bg-primary text-primary-foreground",
+  rental: "bg-[#413B96] text-white",
+};
 
 interface RadialOrbitalTimelineProps {
   items: OrbitalTimelineItem[];
@@ -263,34 +284,34 @@ export function RadialOrbitalTimeline({
                   <CardContent className="text-xs text-white/80">
                     <p>{item.content}</p>
 
-                    {item.relatedIds.length > 0 && (
+                    {/* The apps this step is done in, in place of the
+                        cross-links to neighbouring nodes that used to sit here.
+                        Those were buttons that jumped the orbit sideways, which
+                        answered a question nobody had — the ring already shows
+                        what a step connects to. Which app you open to do it is
+                        the thing you cannot see from the diagram.
+
+                        Labels, not buttons: there is nowhere to go from here.
+                        The colours are the app switcher's, so a pill and a chip
+                        further down the page name the same thing the same way. */}
+                    {item.apps.length > 0 && (
                       <div className="mt-4 border-t border-white/10 pt-3">
                         <div className="mb-2 flex items-center">
-                          <LinkIcon size={10} className="mr-1 text-white/70" />
+                          <Smartphone size={10} className="mr-1 text-white/70" />
                           <h4 className="text-xs font-medium tracking-wider text-white/70 uppercase">
-                            Connects to
+                            Use with
                           </h4>
                         </div>
-                        <div className="flex flex-wrap gap-1">
-                          {item.relatedIds.map((relatedId) => {
-                            const relatedItem = items.find((i) => i.id === relatedId);
-                            return (
-                              <Button
-                                key={relatedId}
-                                variant="outline"
-                                size="sm"
-                                className="flex h-6 items-center rounded-none border-white/20 bg-transparent px-2 py-0 text-xs text-white/80 transition-all hover:bg-white/10 hover:text-white"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleItem(relatedId);
-                                }}
-                              >
-                                {relatedItem?.title}
-                                <ArrowRight size={8} className="ml-1 text-white/60" />
-                              </Button>
-                            );
-                          })}
-                        </div>
+                        <ul className="flex flex-wrap gap-1.5">
+                          {item.apps.map((app) => (
+                            <li
+                              key={app.name}
+                              className={`rounded-[5px] px-2 py-1 text-[11px] leading-none font-medium tracking-[0.06em] uppercase ${APP_TONE[app.tone]}`}
+                            >
+                              {app.name}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </CardContent>

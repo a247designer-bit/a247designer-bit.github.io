@@ -3,11 +3,13 @@ import Image from "next/image";
 import { CalendarDays, ImagePlus, Users, Wallet } from "lucide-react";
 
 import { Band } from "@/components/site/band";
+import { FaqSection } from "@/components/site/faq";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Statement } from "@/components/site/pieces";
 import { CtaPrimary, CtaSecondary } from "@/components/site/cta";
 import { Reveal } from "@/components/motion/reveal";
+import { HOSTS_FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "Hosts",
@@ -211,6 +213,17 @@ export default function HostsPage() {
           </Reveal>
         </div>
       </Band>
+
+      {/* FAQ. Last band on the page and quiet against the paper CTA
+          above it, so the rhythm carries on and the rounded bottom edge
+          that closes every page lands here. */}
+      <FaqSection
+        id="hosts-faq"
+        eyebrow="Questions"
+        heading="Listing your space."
+        lede="What hosts ask before they open their first hours — what you list, what you control and how you get paid."
+        items={HOSTS_FAQ}
+      />
     </>
   );
 }

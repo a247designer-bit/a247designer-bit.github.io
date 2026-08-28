@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { SocialLinks } from "@/components/site/social-links";
+
 const COLUMNS = [
   {
     title: "Product",
@@ -22,22 +24,14 @@ const COLUMNS = [
 /**
  * The legal row, kept out of the product columns above.
  *
- * Terms and Privacy point at the documents already published on blookd.com
- * rather than being restated here — two copies of a binding document is one
- * copy too many, and the one that goes stale is always the duplicate. The
- * other two live on this site.
+ * All four documents live on this site now. Terms and Privacy used to hand the
+ * reader off to blookd.com; they are the two a visitor is most likely to open
+ * mid-signup, and sending them to another domain to read them is the one place
+ * on the site where the journey stops.
  */
 const LEGAL = [
-  {
-    href: "https://www.blookd.com/terms-conditions",
-    label: "Terms and Conditions",
-    external: true,
-  },
-  {
-    href: "https://www.blookd.com/privacy-policy",
-    label: "Privacy Policy",
-    external: true,
-  },
+  { href: "/terms-conditions", label: "Terms and Conditions" },
+  { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/cancellation-policy", label: "Cancellation Policy" },
   { href: "/cookies-policy", label: "Cookies Policy" },
 ];
@@ -66,6 +60,12 @@ export function SiteFooter() {
                 The network for independent beauty — people, professionals and
                 the places they work.
               </p>
+              {/* Under the mark and the line about who Blookd is, not down in
+                  the legal row: these belong with the brand, and the row at the
+                  bottom is for the documents. `-ml-3` pulls the first icon's
+                  44px box back so the drawing lines up with the logotype above
+                  it rather than the padding around it. */}
+              <SocialLinks className="-ml-3" />
             </div>
 
             {COLUMNS.map((col) => (
@@ -102,9 +102,6 @@ export function SiteFooter() {
                     // together than product links do, so the touch target
                     // matters more here, not less.
                     className="inline-flex min-h-11 items-center transition-colors hover:text-foreground"
-                    {...(link.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
                   >
                     {link.label}
                   </Link>

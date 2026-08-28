@@ -19,11 +19,12 @@ import { AppAudienceSwitcher } from "@/components/site/app-audience-switcher";
 
 const ECOSYSTEM = [
   {
-    // No media yet: the GIF that used to sit here was 6.3MB — 84% of the home
-    // page's payload — for a 176px preview most visitors never hover. Left as
-    // a marked placeholder until there is a still or a clip worth its weight.
+    // A still, not the 6.3MB GIF that used to sit here — that was 84% of the
+    // home page's payload for a 176px preview most visitors never hover. This
+    // one is 13KB, which is what the slot was always worth.
     title: "People",
     body: "Looking for someone they can trust.",
+    media: "/people.jpg",
   },
   {
     title: "Professionals",
@@ -45,6 +46,8 @@ const STEPS: OrbitalTimelineItem[] = [
     content:
       "Explore independent professionals near you and find the style, service and experience you're looking for.",
     relatedIds: [2, 5],
+    // A person, browsing. Their side of the network is the one app.
+    apps: [{ name: "Blookd", tone: "blookd" as const }],
   },
   {
     id: 2,
@@ -53,6 +56,12 @@ const STEPS: OrbitalTimelineItem[] = [
     content:
       "Compare services, pricing and availability, then book directly with the professional you chose.",
     relatedIds: [1, 3],
+    // Both ends of the same appointment: made in Blookd, landing in the
+    // schedule the professional keeps in Blookd Biz.
+    apps: [
+      { name: "Blookd", tone: "blookd" as const },
+      { name: "Blookd Biz", tone: "blookd" as const },
+    ],
   },
   {
     id: 3,
@@ -61,6 +70,12 @@ const STEPS: OrbitalTimelineItem[] = [
     content:
       "Put your work in front of people looking for services like yours and turn discovery into real appointments.",
     relatedIds: [2, 4],
+    // The professional works in Biz; what they publish surfaces in Blookd,
+    // where the people looking for it are.
+    apps: [
+      { name: "Blookd Biz", tone: "blookd" as const },
+      { name: "Blookd", tone: "blookd" as const },
+    ],
   },
   {
     id: 4,
@@ -69,6 +84,7 @@ const STEPS: OrbitalTimelineItem[] = [
     content:
       "Book a barber chair for the day or a private studio for longer stays — flexible workspaces, on your schedule.",
     relatedIds: [3, 5],
+    apps: [{ name: "Blookd Rental", tone: "rental" as const }],
   },
   {
     id: 5,
@@ -77,6 +93,7 @@ const STEPS: OrbitalTimelineItem[] = [
     content:
       "List an unused chair, room or station, set when it's available and connect with professionals looking to work.",
     relatedIds: [4, 1],
+    apps: [{ name: "Blookd Rental", tone: "rental" as const }],
   },
 ];
 

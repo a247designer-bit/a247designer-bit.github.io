@@ -3,12 +3,14 @@ import Image from "next/image";
 import { CalendarDays, MapPin, Sparkles, UserRound } from "lucide-react";
 
 import { Band } from "@/components/site/band";
+import { FaqSection } from "@/components/site/faq";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Split, Statement } from "@/components/site/pieces";
 import { MediaFrame } from "@/components/site/media";
 import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary, TextLink } from "@/components/site/cta";
+import { PROFESSIONALS_FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "Professionals",
@@ -183,11 +185,19 @@ export default function ProfessionalsPage() {
           heading="Build your work on your terms."
           media={
             <div className="overflow-hidden rounded-[28px]">
+              {/* The same shot the home page's Blookd card carries, rather than
+                  a second copy of it under its own name — one file, and the two
+                  places that show the app show the same app.
+
+                  Declared square because it IS square. The portrait 1200x1400
+                  this replaces set the frame's aspect, and keeping it would
+                  have cropped 14% off a composition where the phone already
+                  runs top to bottom. */}
               <Image
-                src="/images/pro-portrait.jpg"
-                alt="An independent beauty professional in their workspace"
-                width={1200}
-                height={1400}
+                src="/images/app-card-blookd-2.jpg"
+                alt="The Blookd app open on a phone, showing top rated providers nearby"
+                width={1254}
+                height={1254}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -205,6 +215,17 @@ export default function ProfessionalsPage() {
           </div>
         </Split>
       </Band>
+
+      {/* FAQ. Last band on the page and quiet against the paper CTA
+          above it, so the rhythm carries on and the rounded bottom edge
+          that closes every page lands here. */}
+      <FaqSection
+        id="pros-faq"
+        eyebrow="Questions"
+        heading="Before you join."
+        lede="What independents ask when they are working out whether Blookd fits the way they already work."
+        items={PROFESSIONALS_FAQ}
+      />
     </>
   );
 }

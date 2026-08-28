@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CalendarDays, MapPin, Search, Store } from "lucide-react";
 
 import { Band } from "@/components/site/band";
+import { FaqSection } from "@/components/site/faq";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Split } from "@/components/site/pieces";
@@ -10,6 +11,7 @@ import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary, TextLink } from "@/components/site/cta";
 import { Reveal } from "@/components/motion/reveal";
 import { WORKSPACE_GROUPS } from "@/lib/workspace-categories";
+import { WORKSPACES_FAQ } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "Workspaces",
@@ -195,6 +197,17 @@ export default function WorkspacesPage() {
           </div>
         </Split>
       </Band>
+
+      {/* FAQ. Last band on the page and quiet against the paper CTA
+          above it, so the rhythm carries on and the rounded bottom edge
+          that closes every page lands here. */}
+      <FaqSection
+        id="workspaces-faq"
+        eyebrow="Questions"
+        heading="Renting a space."
+        lede="How booking a workspace through Blookd Rental works, from your first search to the day itself."
+        items={WORKSPACES_FAQ}
+      />
     </>
   );
 }

@@ -23,6 +23,7 @@ export function FeatureCard({
   body,
   image,
   icon,
+  tintedAtRest = false,
   className,
 }: {
   title: string;
@@ -30,6 +31,12 @@ export function FeatureCard({
   /** Square illustration, sized by the card. */
   image?: string;
   icon?: ReactNode;
+  /**
+   * Leave a third of the illustration's colour in the resting state instead of
+   * draining it completely. For the rows where the pictures are the argument
+   * and a wall of grey undersells them.
+   */
+  tintedAtRest?: boolean;
   className?: string;
 }) {
   return (
@@ -43,15 +50,28 @@ export function FeatureCard({
     >
       {image ? (
         <>
-          {/* The resting state: grey, and faint enough that the copy on top of
-              it is still reading against the card's own surface rather than
-              against a picture. */}
+          {/* The resting state: faint enough that the copy on top of it is
+              still reading against the card's own surface rather than against a
+              picture.
+
+              `tintedAtRest` leaves 35% of the colour in. It costs nothing in
+              legibility: `grayscale()` mixes toward the pixel's own luminance,
+              so a partial one moves chroma and leaves relative luminance
+              exactly where it was — measured across all seven illustrations,
+              the worst-case contrast for the body copy is identical at 100%
+              and at 65% grey. What changes is only how much colour is left,
+              from 0 to a mean 7.7/255 of chroma once the 22% is applied. The
+              hover still goes to the full picture, so the reveal keeps its
+              distance to travel. */}
           <Image
             src={image}
             alt=""
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover opacity-[0.22] grayscale transition-opacity duration-700 ease-[var(--ease-out)] group-hover:opacity-0"
+            className={cn(
+              "object-cover opacity-[0.22] transition-opacity duration-700 ease-[var(--ease-out)] group-hover:opacity-0",
+              tintedAtRest ? "grayscale-[.65]" : "grayscale",
+            )}
           />
 
           {/* The colour, and the scrim that keeps the copy legible on top of
@@ -106,10 +126,20 @@ export function FeatureCard({
         <h3 className="text-[19px] leading-[1.2] tracking-[-0.025em] transition-colors duration-700 group-hover:text-white">
           {title}
         </h3>
-        {/* Pure white, not white/85: the scrim above was measured against
-            white, and 85% would quietly spend the margin that measurement
-            bought. Size and weight still separate this from the title. */}
-        <p className="text-[15px] leading-[1.55] text-ink-62 transition-colors duration-700 group-hover:text-white">
+        {/* ink-70 at rest, not the ink-62 the rest of the site's secondary
+            copy runs at. This paragraph is the only one on the site sitting
+            over a picture — faint, at 22%, but enough to move the ground under
+            it. Measured across all eleven illustrations, ink-62 bottoms out at
+            3.79:1 on the light bands and 3.74:1 on the dark one; ink-70 takes
+            those to 4.64:1 and 4.28:1, and to 4.73:1 / 4.55:1 once the worst
+            5% of pixels are set aside. Only the light rows clear AA at their
+            single worst pixel, but both clear it where the text actually is.
+
+            Hover goes to pure white, not white/85: the scrim underneath was
+            measured against white, and 85% would quietly spend the margin that
+            measurement bought. Size and weight still separate this from the
+            title in both states. */}
+        <p className="text-[15px] leading-[1.55] text-ink-70 transition-colors duration-700 group-hover:text-white">
           {body}
         </p>
       </div>

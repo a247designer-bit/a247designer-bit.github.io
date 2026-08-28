@@ -52,8 +52,11 @@ const AUDIENCES: Audience[] = [
     id: "professionals",
     tab: "Professionals",
     title: "Apps for Pros:",
+    // Blookd Biz, not Blookd: the client app and the pro app are separate
+    // builds off the same orange mark, and this is the side of the switch
+    // where saying just "Blookd" would name the one the pro does NOT carry.
     apps: [
-      { name: "Blookd", tone: "blookd" },
+      { name: "Blookd Biz", tone: "blookd" },
       { name: "Blookd Rental", tone: "rental" },
     ],
     points: [
@@ -126,7 +129,7 @@ const COPY_PLACEMENT: Record<AudienceId, { x: number; w: number }> = {
  */
 const ICONS = [
   { src: "/images/app-icon-people.svg", alt: "Blookd app icon", x: 12, states: ["people"] },
-  { src: "/images/app-icon-pros.svg", alt: "Blookd for pros app icon", x: 12, states: ["professionals"] },
+  { src: "/images/app-icon-pros.svg", alt: "Blookd Biz app icon", x: 12, states: ["professionals"] },
   {
     src: "/images/app-icon-rental.svg",
     alt: "Blookd Rental app icon",
@@ -135,18 +138,43 @@ const ICONS = [
   },
 ] as const;
 
+/**
+ * The mockups, shot straight on rather than in isometric.
+ *
+ * `accent` is the halo each one is lit with while it is the app being talked
+ * about — the same `.showcase-glow` the walkthroughs use, so a phone reads as
+ * "this is the one" here the same way it does on the product pages. The two
+ * values are the two brand accents, and the indigo arrives as `.accent-indigo`
+ * rather than as a colour: the glow reads `--primary`, so repointing the token
+ * is what turns it, exactly as the Rental walkthrough does it.
+ */
 const PHONES = [
   {
     key: "blookd" as const,
-    src: "/images/app-phone-blookd.png",
+    src: "/images/app-phone-blookd-2.png",
     alt: "The Blookd app showing top rated providers near you",
+    accent: "",
   },
   {
     key: "rental" as const,
-    src: "/images/app-phone-rental.png",
+    src: "/images/app-phone-rental-2.png",
     alt: "The Blookd Rental app showing workspaces available in Denver",
+    accent: "accent-indigo",
   },
 ];
+
+/**
+ * The upright mockups are portrait — 886x1812, a hair under 1:2 — where the
+ * isometric pair they replace was almost square. So the stage is now sized by
+ * how tall a phone should be rather than by how wide, and every other figure
+ * on it is derived from that one number.
+ *
+ * `--stage-h` is the height of the stage; a phone stands 76% of it, which at
+ * the 886/1812 aspect makes it 0.372 of the stage tall in width. Written as a
+ * calc off the same variable so the two can never drift apart when the stage
+ * is retuned.
+ */
+const PHONE_WIDTH = "md:w-[calc(var(--stage-h)*0.372)]";
 
 export function AppAudienceSwitcher() {
   const [active, setActive] = useState<AudienceId>("people");
@@ -201,7 +229,7 @@ export function AppAudienceSwitcher() {
         id={`${baseId}-panel`}
         role="tabpanel"
         aria-labelledby={`${baseId}-${active}-tab`}
-        className="relative flex flex-col items-center gap-8 md:block md:h-[400px] lg:h-[470px]"
+        className="relative flex flex-col items-center gap-8 md:block md:h-[var(--stage-h)] md:[--stage-h:480px] lg:[--stage-h:680px]"
       >
         {PHONES.map((phone) => {
           const place = PHONE_PLACEMENT[active][phone.key];
@@ -209,8 +237,9 @@ export function AppAudienceSwitcher() {
             <div
               key={phone.key}
               className={cn(
-                "w-full max-w-[320px] transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
-                "md:absolute md:top-[46%] md:w-[clamp(240px,25vw,360px)] md:-translate-x-1/2 md:-translate-y-1/2 md:scale-[var(--s)]",
+                "w-full max-w-[260px] transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
+                "md:absolute md:top-[44%] md:max-w-none md:-translate-x-1/2 md:-translate-y-1/2 md:scale-[var(--s)]",
+                PHONE_WIDTH,
                 "md:blur-[var(--b)] md:opacity-[var(--o)]",
                 // Below md only the app this audience actually opens is shown.
                 !place.lifted && "hidden md:block",
@@ -225,13 +254,27 @@ export function AppAudienceSwitcher() {
                 } as CSSProperties
               }
             >
-              <Image
-                src={phone.src}
-                alt={place.lifted ? phone.alt : ""}
-                width={800}
-                height={776}
-                className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-              />
+              {/* The halo gets its own element rather than going on the wrapper
+                  above: that one is already carrying `blur` and `opacity`, and
+                  `.showcase-glow` writes `filter` outright, so the two would be
+                  fighting over the same property. Nested, they compose — the
+                  phone that has dropped back keeps its blur AND loses its
+                  light, which is the whole point of the dimmed state. */}
+              <div
+                className={cn(
+                  "transition-[filter] duration-700",
+                  place.lifted && "showcase-glow",
+                  phone.accent,
+                )}
+              >
+                <Image
+                  src={phone.src}
+                  alt={place.lifted ? phone.alt : ""}
+                  width={886}
+                  height={1812}
+                  className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+                />
+              </div>
             </div>
           );
         })}
@@ -249,7 +292,11 @@ export function AppAudienceSwitcher() {
                 aria-hidden={!shown}
                 className={cn(
                   "transition-[left,opacity,transform] duration-700 ease-[var(--ease-out)]",
-                  "md:absolute md:top-[82%] md:z-30 md:block md:-translate-x-1/2",
+                  // 86%, not the 82% the isometric pair left room for. The
+                  // mark hangs from its top edge, not its centre, so the figure
+                  // has to clear the phone's feet at 82% AND leave its own
+                  // height — up to 76px of a 680px stage — above the bottom.
+                  "md:absolute md:top-[86%] md:z-30 md:block md:-translate-x-1/2",
                   shown ? "md:opacity-100" : "hidden md:block md:scale-75 md:opacity-0",
                 )}
                 style={{ left: `${icon.x}%` }}
@@ -276,7 +323,7 @@ export function AppAudienceSwitcher() {
             to hang from, which is what makes the ragged lines read as set
             rather than as spilled. */}
         <div
-          className="w-full transition-[left,width] duration-700 ease-[var(--ease-out)] md:absolute md:top-[46%] md:z-30 md:w-[var(--cw)] md:-translate-x-1/2 md:-translate-y-1/2"
+          className="w-full transition-[left,width] duration-700 ease-[var(--ease-out)] md:absolute md:top-[44%] md:z-30 md:w-[var(--cw)] md:-translate-x-1/2 md:-translate-y-1/2"
           style={
             {
               // Width is a var, not an inline `width`: below md the block is in
@@ -295,7 +342,7 @@ export function AppAudienceSwitcher() {
               {current.title}
             </h3>
 
-            {/* One chip per app, so "Blookd + Blookd Rental" stops being a
+            {/* One chip per app, so "Blookd Biz + Blookd Rental" stops being a
                 sentence to parse and becomes two things you can count. */}
             <ul className="mt-3 flex flex-wrap gap-1.5">
               {current.apps.map((app) => (

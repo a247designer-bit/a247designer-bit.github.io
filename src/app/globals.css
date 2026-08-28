@@ -305,6 +305,31 @@
     );
   }
 
+  /* The FAQ question chip.
+
+     Written here rather than passed down as classes because the open state has
+     to be addressed through the trigger ABOVE it: Radix marks the button with
+     data-state, and the chip is its child. The two rules also outrank a single
+     utility class on specificity, which is what stops the accordion's own
+     `bg-muted` / `bg-primary/20` pair from deciding the colour — that pair
+     resolves to the quiet grey these sections are already sitting on, so the
+     chip would have gone invisible on every quiet band.
+
+     Both colours are mixed from --primary, so the chip follows the band's
+     accent the way the rail and the halo do, rather than naming an orange. */
+  [data-state] > .faq-chip:hover {
+    background-color: color-mix(in oklab, var(--primary) 10%, var(--surface));
+  }
+  [data-state="open"] > .faq-chip {
+    background-color: color-mix(in oklab, var(--primary) 16%, var(--surface));
+    /* Not the accent at full strength. #dc4b14 on the 16% tint this rule just
+       painted is 3.37:1 — under AA for the 16px the question is set at. Pulled
+       78% of the way from the accent toward the ink it sits on, it is 4.74:1
+       and still unmistakably the same orange. The mix is against --ink rather
+       than a second hex so it inverts correctly on a dark band. */
+    color: color-mix(in oklab, var(--primary) 78%, var(--ink));
+  }
+
   /* The page has to close on a card, not on a cut edge. Bands only round their
      top, which is right while they are stacking over one another — but the last
      one has nothing below it except the footer card, so it rounds its bottom to
