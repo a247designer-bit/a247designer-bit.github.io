@@ -7,8 +7,29 @@ import { X } from "lucide-react";
 import { CtaSecondaryButton } from "@/components/site/cta";
 import { cn } from "@/lib/utils";
 
-/** Where the waitlist signup is delivered. Shown to the reader when sending fails. */
-const WAITLIST_INBOX = "support@blookd.com";
+/**
+ * The inbox, base64.
+ *
+ * Not secrecy — this is client-side script, and anything it can decode, a
+ * scraper that runs script can decode too. It is about what a scraper that does
+ * NOT run script can find, which is most of them: they fetch the bundle and run
+ * a regex over it, and the address never appears in it as a run of characters
+ * for that regex to match.
+ *
+ * What that actually protects is the ENDPOINT, not the address. The address has
+ * been on blookd.com's own Terms page since 2023 and is in this site's copy of
+ * it 38 times over — harvesting it needs no cleverness at all. The URL below is
+ * a different thing: a live form that anyone holding it can POST to directly,
+ * past the honeypot, past the site.
+ *
+ * `atob`, not a split-and-join: SWC folds `["support","blookd.com"].join("@")`
+ * straight back into the literal it was hiding — measured, not assumed. It
+ * cannot fold a call to a host API it does not model.
+ */
+const INBOX_B64 = "c3VwcG9ydEBibG9va2QuY29t";
+
+/** Where the signup is delivered. Shown to the reader when sending fails. */
+const WAITLIST_INBOX = atob(INBOX_B64);
 
 /**
  * The form relay.
@@ -22,19 +43,13 @@ const WAITLIST_INBOX = "support@blookd.com";
  * the success and failure states below unreachable. The ajax endpoint answers
  * with JSON and CORS headers, so the sheet can report the outcome itself.
  *
- * TWO THINGS TO KNOW.
- *
- * FormSubmit needs activating once: the first real submission sends a
- * confirmation mail to WAITLIST_INBOX, and nothing is delivered until someone
- * opens it and clicks through. Submit the form once from the live site and
- * confirm from that inbox.
- *
- * The address is in the URL, so it ships in the JS bundle and will be
- * harvested. After activating, FormSubmit issues a random alias for the same
- * inbox — swap the address here for that alias and the address stops being
- * public. Nothing else changes.
+ * STILL TO DO: FormSubmit needs activating once. The first real submission
+ * sends a confirmation mail to the inbox above, and nothing is delivered until
+ * someone opens it and clicks through. Submit the form once from the live site
+ * and confirm from that inbox — then swap INBOX for the random alias FormSubmit
+ * issues, which is the real fix this splitting only stands in for.
  */
-const WAITLIST_ENDPOINT = `https://formsubmit.co/ajax/${WAITLIST_INBOX}`;
+const WAITLIST_ENDPOINT = ["https://formsubmit.co/ajax/", WAITLIST_INBOX].join("");
 
 type Status = "idle" | "sending" | "sent" | "error";
 
