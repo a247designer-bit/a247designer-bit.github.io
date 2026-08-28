@@ -12,10 +12,10 @@ import { AppBadgeButton } from "@/components/ui/app-badge-button";
  * download on either would mean picking an app the page never named.
  */
 const APP_BY_PATH: Record<string, { icon: string; app: string }> = {
-  "/services": { icon: "/images/app-icon-people.svg", app: "Blookd" },
-  "/professionals": { icon: "/images/app-icon-pros.svg", app: "Blookd" },
-  "/workspaces": { icon: "/images/app-icon-rental.svg", app: "Blookd Rental" },
-  "/hosts": { icon: "/images/app-icon-rental.svg", app: "Blookd Rental" },
+  "/services": { icon: "/images/app-icon-people@3x.png", app: "Blookd" },
+  "/professionals": { icon: "/images/app-icon-pros@3x.png", app: "Blookd" },
+  "/workspaces": { icon: "/images/app-icon-rental@3x.png", app: "Blookd Rental" },
+  "/hosts": { icon: "/images/app-icon-rental@3x.png", app: "Blookd Rental" },
 };
 
 /** Trailing slashes are the site's URL style; see the note in site-header. */
@@ -45,8 +45,12 @@ export function GetAppFab() {
             // Decorative: "Get App / Blookd Rental" beside it already names
             // the thing, and a second reading of the same name is noise.
             alt=""
-            width={80}
-            height={80}
+            // The 3x raster, not the 80px vector it was cut from: iOS Safari
+            // rasterises SVG filter chains at 1x and this mark is three of
+            // them stacked, so on a phone the vector arrived softer than a
+            // bitmap does. Pre-rendered, it is also a third of the file.
+            width={240}
+            height={240}
             className="size-10 rounded-[10px]"
           />
         }

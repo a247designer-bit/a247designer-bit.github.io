@@ -9,6 +9,7 @@ import { Eyebrow, Lede } from "@/components/site/type";
 import { MediaFrame } from "@/components/site/media";
 import { Reveal } from "@/components/motion/reveal";
 import { AppAudienceSwitcher } from "@/components/site/app-audience-switcher";
+import { AppIconCycle } from "@/components/site/app-icon-cycle";
 
 /**
  * Merges what were two separate sections — the ecosystem (people,
@@ -143,19 +144,7 @@ export function NetworkOrbital() {
           ))}
         </div>
 
-        <RadialOrbitalTimeline
-          items={STEPS}
-          centerMark={
-            <video
-              src="/icon-wrapper-motion.webm"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="size-full"
-            />
-          }
-        />
+        <RadialOrbitalTimeline items={STEPS} centerMark={<AppIconCycle />} />
         </div>
 
         {/* The apps themselves, as the same three audiences named above.

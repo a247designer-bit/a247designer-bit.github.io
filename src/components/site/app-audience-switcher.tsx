@@ -128,10 +128,10 @@ const COPY_PLACEMENT: Record<AudienceId, { x: number; w: number }> = {
  * the pro build — so they share the left mark and never appear together.
  */
 const ICONS = [
-  { src: "/images/app-icon-people.svg", alt: "Blookd app icon", x: 12, states: ["people"] },
-  { src: "/images/app-icon-pros.svg", alt: "Blookd Biz app icon", x: 12, states: ["professionals"] },
+  { src: "/images/app-icon-people@3x.png", alt: "Blookd app icon", x: 12, states: ["people"] },
+  { src: "/images/app-icon-pros@3x.png", alt: "Blookd Biz app icon", x: 12, states: ["professionals"] },
   {
-    src: "/images/app-icon-rental.svg",
+    src: "/images/app-icon-rental@3x.png",
     alt: "Blookd Rental app icon",
     x: 88,
     states: ["professionals", "hosts"],
@@ -304,8 +304,10 @@ export function AppAudienceSwitcher() {
                 <Image
                   src={icon.src}
                   alt={shown ? icon.alt : ""}
-                  width={80}
-                  height={80}
+                  // 240px for a mark that is never drawn above 76 — see the
+                  // note in get-app-fab on why these are rasters now.
+                  width={240}
+                  height={240}
                   className="size-[clamp(52px,5vw,76px)]"
                 />
               </div>

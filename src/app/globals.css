@@ -356,6 +356,41 @@
   }
 }
 
+/* The mark at the centre of the orbit: the three app icons, cycling.
+
+   This replaced a 126px VP9 WebM. Two things were wrong with it on a phone.
+   Safari decodes VP9 but drops the alpha channel, so the transparent ground
+   came back black — a hard black square in the middle of the orbit. And a
+   126px source with a 72px icon inside it was already at 1x on a 3x screen,
+   so what did render was soft. Both go away when the icons are icons again.
+
+   One cycle is three states; each icon is on screen for a third of it plus
+   the crossfade at either end, so the neighbours overlap rather than blink.
+   The 26% offset is measured off the old video: its content spread about
+   19px past the icon box mid-transition, which is what 26% of 72px is. */
+@keyframes app-icon-cycle {
+  0% {
+    opacity: 0;
+    transform: translate3d(26%, 0, 0) scale(0.9);
+  }
+  9% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33.33% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  42.33% {
+    opacity: 0;
+    transform: translate3d(-26%, 0, 0) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(26%, 0, 0) scale(0.9);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
