@@ -112,9 +112,14 @@ export function NetworkOrbital() {
         </Lede>
       </Reveal>
 
+      {/* Full-bleed on a phone. Inside the container's 24px gutter the panel
+          was a 327px box holding a 279px orbit — the composition spent more of
+          the screen on margins than on itself. The background now runs edge to
+          edge and only the padding is left, so the copy still starts on the
+          same left edge as the heading above it. */}
       <Reveal
         delay={100}
-        className="flex flex-col rounded-[16px] bg-[#081C15]/70 p-6 md:p-10"
+        className="-mx-6 flex flex-col bg-[#081C15]/70 p-6 md:mx-0 md:rounded-[16px] md:p-10"
       >
         <div className="grid gap-10 lg:grid-cols-[minmax(0,320px)_1fr] lg:items-center lg:gap-16">
         <div className="flex flex-col gap-8">
@@ -144,7 +149,18 @@ export function NetworkOrbital() {
           ))}
         </div>
 
-        <RadialOrbitalTimeline items={STEPS} centerMark={<AppIconCycle />} />
+        {/* And the orbit takes the padding back too: it is a diagram, not
+            text, so it has no left edge to keep. Off the panel's 24px it
+            scales at 0.83 of natural size on a 375px screen where it used to
+            sit at 0.62 — a third larger, without moving anything else.
+
+            The negative margin goes on a wrapper rather than on the timeline
+            itself: that component sets its own `w-full`, and a percentage
+            width does not grow to meet a negative margin the way an auto one
+            does — it would have shifted left and stayed 327px wide. */}
+        <div className="-mx-6 md:mx-0">
+          <RadialOrbitalTimeline items={STEPS} centerMark={<AppIconCycle />} />
+        </div>
         </div>
 
         {/* The apps themselves, as the same three audiences named above.

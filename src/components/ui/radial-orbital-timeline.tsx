@@ -276,12 +276,39 @@ export function RadialOrbitalTimeline({
               </div>
 
               {isExpanded && (
-                <Card className="absolute top-[112px] left-1/2 w-64 -translate-x-1/2 overflow-visible border-white/30 bg-black/90 shadow-xl shadow-white/10 backdrop-blur-lg">
+                /* Undoes the orbit's own scale, so the card is drawn at the
+                   size it is written at rather than at 0.83 of it.
+
+                   Everything else in here is a diagram and shrinks happily —
+                   dots, rings, the labels. The card is the one part that is
+                   prose, and prose does not survive being multiplied by 0.62:
+                   12px body copy was landing on a phone at 7.4px. Scaling it
+                   back out is one transform, where compensating each type size
+                   in turn would be eight. Above md the orbit is already at
+                   natural size, so the factor is 1 and this is a no-op.
+
+                   Origin at the top edge so the card grows downward, away from
+                   the node it hangs off, and translateX(-50%) still centres it
+                   — the shift is read off the unscaled width either way. */
+                <Card
+                  style={{
+                    transform: `translateX(-50%) scale(${round(1 / scale, 4)})`,
+                    transformOrigin: "50% 0",
+                  }}
+                  /* 92px rather than 112 below md. The offset is measured in
+                     the orbit's own space, so an undone scale makes the card
+                     taller there in the same proportion — on a 320px screen
+                     the tallest card reached 240 against the 235 the frame
+                     allows and lost a few pixels off the bottom. Twenty back
+                     clears it, and after the scale the gap still reads wider
+                     than it did before. */
+                  className="absolute top-[92px] left-1/2 w-[288px] overflow-visible border-white/30 bg-black/90 shadow-xl shadow-white/10 backdrop-blur-lg md:top-[112px] md:w-64"
+                >
                   <div className="absolute -top-3 left-1/2 h-3 w-px -translate-x-1/2 bg-white/50"></div>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm text-white">{item.title}</CardTitle>
+                    <CardTitle className="text-[15px] text-white md:text-sm">{item.title}</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-xs text-white/80">
+                  <CardContent className="text-[13px] text-white/80 md:text-xs">
                     <p>{item.content}</p>
 
                     {/* The apps this step is done in, in place of the

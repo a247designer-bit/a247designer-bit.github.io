@@ -174,6 +174,52 @@ const PHONES = [
  * calc off the same variable so the two can never drift apart when the stage
  * is retuned.
  */
+/**
+ * The same three states, laid out for a phone.
+ *
+ * Above md the stage is an absolute canvas and the figures are placed on it by
+ * percentage. There is no room for that below md, so it collapses to a flex
+ * row — but a row, not the column it used to be. Stacked, one mockup ate the
+ * whole viewport height before a word of the copy appeared.
+ *
+ * Which side the copy takes is inherited from the desktop placement, so the
+ * two layouts stay recognisably the same picture: the copy sits where the
+ * prominent mockup is not. People keeps its phone on the left and hosts on the
+ * right, exactly as COPY_PLACEMENT puts them at 70% and 30%.
+ *
+ * Professionals is the exception, and it is the reason this is a wrap rather
+ * than a row: it is the one state carrying two phones, and two phones plus
+ * copy across 327px would leave the words about 100px to live in. So the copy
+ * takes the full width above and the pair sits underneath it.
+ *
+ * 40% is the halved mockup — 260px on the old stacked layout, ~131px here —
+ * and professionals holds the same 40% rather than splitting the row in two,
+ * so a phone is the same size whichever tab you are on.
+ *
+ * Whole class strings, not assembled ones: Tailwind finds classes by scanning
+ * source text, so `w-[${n}%]` would never generate a rule.
+ */
+const MOBILE_LAYOUT: Record<
+  AudienceId,
+  { copy: string; blookd: string; rental: string }
+> = {
+  people: {
+    copy: "order-2 min-w-0 flex-1",
+    blookd: "order-1 w-[40%]",
+    rental: "hidden",
+  },
+  professionals: {
+    copy: "order-1 w-full",
+    blookd: "order-2 w-[40%]",
+    rental: "order-3 w-[40%]",
+  },
+  hosts: {
+    copy: "order-1 min-w-0 flex-1",
+    blookd: "hidden",
+    rental: "order-2 w-[40%]",
+  },
+};
+
 const PHONE_WIDTH = "md:w-[calc(var(--stage-h)*0.372)]";
 
 export function AppAudienceSwitcher() {
@@ -189,7 +235,12 @@ export function AppAudienceSwitcher() {
       <div
         role="tablist"
         aria-label="Choose who the app is for"
-        className="relative mx-auto grid w-full max-w-[420px] grid-cols-3 rounded-full bg-black/25 p-1 ring-1 ring-inset ring-white/10"
+        // -mx-2 on a phone: "Professionals" needs 96px at 15px and an equal
+        // third of the panel only gave it 106px to sit in, so the longest of
+        // the three labels was clipping its own pill. Widened first, then the
+        // label dropped a point — at 14px it measures 90px in a 111px cell,
+        // which is the difference between fitting and being seen to fit.
+        className="relative -mx-2 grid w-[calc(100%+1rem)] grid-cols-3 rounded-full bg-black/25 p-1 ring-1 ring-inset ring-white/10 md:mx-auto md:w-full md:max-w-[420px]"
       >
         {/* Held off pure white on purpose. At full white the pill is the
             brightest thing on the page and pulls rank on the mockups it is
@@ -210,7 +261,7 @@ export function AppAudienceSwitcher() {
             aria-controls={`${baseId}-panel`}
             onClick={() => setActive(audience.id)}
             className={cn(
-              "relative z-10 rounded-full px-3 py-2.5 text-[15px] transition-colors duration-300",
+              "relative z-10 rounded-full px-1.5 py-2.5 text-[14px] transition-colors duration-300 md:px-3 md:text-[15px]",
               audience.id === active
                 ? "text-[#0f1b16]"
                 : "text-white/65 hover:text-white",
@@ -229,7 +280,7 @@ export function AppAudienceSwitcher() {
         id={`${baseId}-panel`}
         role="tabpanel"
         aria-labelledby={`${baseId}-${active}-tab`}
-        className="relative flex flex-col items-center gap-8 md:block md:h-[var(--stage-h)] md:[--stage-h:480px] lg:[--stage-h:680px]"
+        className="relative flex flex-wrap items-center justify-center gap-x-3 gap-y-8 md:block md:h-[var(--stage-h)] md:[--stage-h:480px] lg:[--stage-h:680px]"
       >
         {PHONES.map((phone) => {
           const place = PHONE_PLACEMENT[active][phone.key];
@@ -237,12 +288,14 @@ export function AppAudienceSwitcher() {
             <div
               key={phone.key}
               className={cn(
-                "w-full max-w-[260px] transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
-                "md:absolute md:top-[44%] md:max-w-none md:-translate-x-1/2 md:-translate-y-1/2 md:scale-[var(--s)]",
+                "transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
+                // Below md: which side of the row it takes and how wide it is.
+                // The map also drops the app this audience does not open — the
+                // same phones the desktop stage merely dims.
+                MOBILE_LAYOUT[active][phone.key],
+                "md:absolute md:top-[44%] md:block md:w-auto md:max-w-none md:-translate-x-1/2 md:-translate-y-1/2 md:scale-[var(--s)]",
                 PHONE_WIDTH,
                 "md:blur-[var(--b)] md:opacity-[var(--o)]",
-                // Below md only the app this audience actually opens is shown.
-                !place.lifted && "hidden md:block",
                 place.lifted ? "md:z-20" : "md:z-10",
               )}
               style={
@@ -283,7 +336,7 @@ export function AppAudienceSwitcher() {
             against the stage rather than against a wrapper — one set of icons
             that reads as a row on a phone and as two marks flanking the
             mockups on a desktop. */}
-        <div className="flex items-center gap-4 md:contents">
+        <div className="order-4 flex w-full items-center justify-center gap-4 md:contents">
           {ICONS.map((icon) => {
             const shown = (icon.states as readonly string[]).includes(active);
             return (
@@ -325,7 +378,11 @@ export function AppAudienceSwitcher() {
             to hang from, which is what makes the ragged lines read as set
             rather than as spilled. */}
         <div
-          className="w-full transition-[left,width] duration-700 ease-[var(--ease-out)] md:absolute md:top-[44%] md:z-30 md:w-[var(--cw)] md:-translate-x-1/2 md:-translate-y-1/2"
+          className={cn(
+            MOBILE_LAYOUT[active].copy,
+            "transition-[left,width] duration-700 ease-[var(--ease-out)]",
+            "md:absolute md:top-[44%] md:z-30 md:w-[var(--cw)] md:-translate-x-1/2 md:-translate-y-1/2",
+          )}
           style={
             {
               // Width is a var, not an inline `width`: below md the block is in
@@ -338,9 +395,15 @@ export function AppAudienceSwitcher() {
         >
           <div
             key={active}
-            className="animate-in fade-in rounded-[16px] bg-[#0A1C15]/45 p-5 text-balance ring-1 ring-inset ring-white/10 backdrop-blur-md duration-500 md:p-6"
+            // p-4 below md. Beside a mockup the card is ~195px wide, and 20px
+            // of padding on each side was taking a quarter of that off the
+            // line length.
+            className="animate-in fade-in rounded-[16px] bg-[#0A1C15]/45 p-4 text-balance ring-1 ring-inset ring-white/10 backdrop-blur-md duration-500 md:p-6"
           >
-            <h3 className="font-display text-[clamp(22px,2.1vw,30px)] leading-[1.1] tracking-[-0.03em] text-foreground">
+            {/* 19px in the narrow column: at 22px "App for People:" measured
+                wider than the line it had, so the title broke in the middle of
+                its own phrase. */}
+            <h3 className="font-display text-[19px] leading-[1.1] tracking-[-0.03em] text-foreground md:text-[clamp(22px,2.1vw,30px)]">
               {current.title}
             </h3>
 
@@ -360,11 +423,11 @@ export function AppAudienceSwitcher() {
               ))}
             </ul>
 
-            <ul className="mt-4 flex flex-col gap-2.5 border-t border-white/10 pt-4">
+            <ul className="mt-3.5 flex flex-col gap-2 border-t border-white/10 pt-3.5 md:mt-4 md:gap-2.5 md:pt-4">
               {current.points.map((point) => (
                 <li
                   key={point}
-                  className="text-pretty text-[14px] leading-[1.5] text-ink-70"
+                  className="text-pretty text-[13px] leading-[1.5] text-ink-70 md:text-[14px]"
                 >
                   {point}
                 </li>
