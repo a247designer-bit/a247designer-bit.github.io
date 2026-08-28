@@ -31,10 +31,10 @@ export default function AboutPage() {
           media={
             <div className="overflow-hidden rounded-[28px]">
               <Image
-                src="/images/stylist-mirror.jpg"
-                alt="Inside a working salon"
-                width={1200}
-                height={900}
+                src="/images/about-origin.jpg"
+                alt="Collage of beauty professionals set into cut-out Blookd letterforms"
+                width={1600}
+                height={1600}
                 className="h-full w-full object-cover"
               />
             </div>
@@ -83,10 +83,10 @@ export default function AboutPage() {
           media={
             <div className="overflow-hidden rounded-[28px]">
               <Image
-                src="/images/community.jpg"
-                alt="People at work in the beauty industry"
-                width={1200}
-                height={900}
+                src="/images/about-mission.jpg"
+                alt="A nail artist at work, collaged into cut-out Blookd letterforms"
+                width={1600}
+                height={1600}
                 className="h-full w-full object-cover"
               />
             </div>
