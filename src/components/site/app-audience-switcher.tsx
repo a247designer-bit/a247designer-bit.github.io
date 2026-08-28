@@ -205,7 +205,17 @@ const TAB_TINT: Record<AudienceId, string> = {
 };
 
 const MOBILE_COPY = "order-1 w-full";
-const MOBILE_PHONE = "order-2 w-[40%]";
+
+/**
+ * How wide a mockup stands below md, by how many are standing.
+ *
+ * 40% was set when the copy sat beside the phone and the row had to hold
+ * both. It does not any more: the copy took the full width above, so a state
+ * carrying one phone has the whole row for it and a 131px mockup under a
+ * 327px card read as a footnote to it. Two still share the row, and 40% each
+ * is what fits them with a gap.
+ */
+const MOBILE_PHONE = { 1: "order-2 w-[60%]", 2: "order-2 w-[40%]" } as const;
 
 const PHONE_WIDTH = "md:w-[calc(var(--stage-h)*0.372)]";
 
@@ -214,6 +224,11 @@ export function AppAudienceSwitcher() {
   const baseId = useId();
   const current = AUDIENCES.find((a) => a.id === active) ?? AUDIENCES[0];
   const activeIndex = AUDIENCES.findIndex((a) => a.id === active);
+  // How many mockups this state stands up — the same `lifted` flag that
+  // decides which of them shows below md at all.
+  const liftedCount = PHONES.filter(
+    (phone) => PHONE_PLACEMENT[active][phone.key].lifted,
+  ).length as 1 | 2;
 
   return (
     <div className="flex flex-col gap-10 md:gap-14">
@@ -289,7 +304,7 @@ export function AppAudienceSwitcher() {
               key={phone.key}
               className={cn(
                 "transition-[left,transform,filter,opacity] duration-700 ease-[var(--ease-out)]",
-                MOBILE_PHONE,
+                MOBILE_PHONE[liftedCount],
                 // Below md only the app this audience actually opens is shown;
                 // the desktop stage merely dims the other one.
                 !place.lifted && "hidden md:block",

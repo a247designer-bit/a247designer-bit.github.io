@@ -298,11 +298,28 @@
   /* The lit mockup's halo. drop-shadow (not box-shadow) so it follows the
      painted pixels of the screen inside rather than boxing its wrapper, and it
      reads --primary so it changes colour with the section's accent instead of
-     carrying a hard-coded orange. */
+     carrying a hard-coded orange.
+
+     Off below md, where it was visibly painting in. drop-shadow has to blur
+     the alpha silhouette of an 886x1812 mockup rather than a rectangle, the
+     wrapper transitions `filter` over 700ms, and the walkthrough moves the
+     class from card to card as you scroll — so a phone scrolling that column
+     was re-blurring a full-size alpha channel every frame of every handoff.
+
+     Leaving it permanently on instead would be worse, not better: it would
+     paint that filter on every step at once rather than on one, and the halo
+     is there to say which step is being read. On a phone the column shows the
+     steps one at a time anyway, so nothing is lost by dropping it. */
   .showcase-glow {
     filter: drop-shadow(
       0 0 40px color-mix(in oklab, var(--primary) 55%, transparent)
     );
+  }
+
+  @media (max-width: 767px) {
+    .showcase-glow {
+      filter: none;
+    }
   }
 
   /* The FAQ question chip.
