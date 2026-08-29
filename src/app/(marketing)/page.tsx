@@ -283,22 +283,22 @@ export default function HomePage() {
             items={[
               {
                 title: "List your space.",
-                image: "/images/cards/list-your-space.jpg",
+                image: "/images/cards/list-your-space-2.jpg",
                 body: "Show professionals what makes your workspace worth booking.",
               },
               {
                 title: "Set your availability.",
-                image: "/images/cards/set-your-availability.jpg",
+                image: "/images/cards/set-your-availability-2.jpg",
                 body: "Decide when the space is open and keep your schedule under control.",
               },
               {
                 title: "Connect with professionals.",
-                image: "/images/cards/connect-with-professionals.jpg",
+                image: "/images/cards/connect-with-professionals-2.jpg",
                 body: "Reach beauty professionals actively looking for places to work.",
               },
               {
                 title: "Earn from unused space.",
-                image: "/images/cards/earn-from-unused-space.jpg",
+                image: "/images/cards/earn-from-unused-space-2.jpg",
                 body: "Make more of the chairs, rooms and stations you already have.",
               },
             ]}
