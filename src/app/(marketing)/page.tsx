@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Band } from "@/components/site/band";
 import { Hero } from "@/components/site/hero";
 import { NetworkOrbital } from "@/components/site/network-orbital";
+import { RealGallery } from "@/components/site/real-gallery";
 import { ShaderBackground } from "@/components/ui/static-mesh-gradient";
 import AnimatedTextCycle from "@/components/ui/animated-text-cycle";
 import { ParallaxImage } from "@/components/site/parallax-image";
@@ -410,44 +411,32 @@ export default function HomePage() {
             </Lede>
           </Reveal>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              {
-                src: "/images/real-people.jpg",
-                alt: "An illustration of a stylist and her client, side by side",
-                label: "Real people",
-              },
-              {
-                src: "/images/real-talent.jpg",
-                alt: "An illustration of a braider's hands parting and plaiting hair",
-                label: "Real talent",
-              },
-              {
-                src: "/images/real-places.jpg",
-                alt: "An illustration of a barber's chair, mirror and station",
-                label: "Real places",
-              },
-            ].map((item, i) => (
-              <Reveal
-                key={item.src}
-                delay={i * 90}
-                className="flex flex-col gap-4"
-              >
-                <div className="overflow-hidden rounded-[24px]">
-                  <Image
-                    src={item.src}
-                    alt={item.alt}
-                    width={900}
-                    height={900}
-                    className="aspect-[4/5] w-full object-cover"
-                  />
-                </div>
-                <span className="font-display text-[20px] tracking-[-0.025em]">
-                  {item.label}
-                </span>
-              </Reveal>
-            ))}
-          </div>
+          {/* One Reveal around the strip rather than one per picture. The
+              per-item stagger watched each picture for itself, and on a phone
+              two of the three now sit outside the viewport — they would have
+              waited for an intersection that never comes and stayed hidden
+              behind the carousel. */}
+          <Reveal>
+            <RealGallery
+              items={[
+                {
+                  src: "/images/real-people.jpg",
+                  alt: "An illustration of a stylist and her client, side by side",
+                  label: "Real people",
+                },
+                {
+                  src: "/images/real-talent.jpg",
+                  alt: "An illustration of a braider's hands parting and plaiting hair",
+                  label: "Real talent",
+                },
+                {
+                  src: "/images/real-places.jpg",
+                  alt: "An illustration of a barber's chair, mirror and station",
+                  label: "Real places",
+                },
+              ]}
+            />
+          </Reveal>
         </div>
       </Band>
 
