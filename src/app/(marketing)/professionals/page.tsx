@@ -7,7 +7,7 @@ import { FaqSection } from "@/components/site/faq";
 import { Hero } from "@/components/site/hero";
 import { AppShowcase } from "@/components/site/app-showcase";
 import { Split, Statement } from "@/components/site/pieces";
-import { MediaFrame } from "@/components/site/media";
+import { AnimatedTiles } from "@/components/ui/animated-tiles";
 import { Eyebrow, Lede } from "@/components/site/type";
 import { CtaPrimary, CtaSecondary, TextLink } from "@/components/site/cta";
 import { PROFESSIONALS_FAQ } from "@/content/faq";
@@ -51,7 +51,14 @@ export default function ProfessionalsPage() {
           eyebrow={<Eyebrow>Visibility</Eyebrow>}
           heading="Get discovered for what you do best."
           media={
-            <MediaFrame ratio="4 / 3" label="reserved: pro profile preview" />
+            // No frame around it. The tile mask already fades to nothing at
+            // every edge, so a rounded box would be drawing a border around a
+            // figure whose whole idea is not having one.
+            <AnimatedTiles
+              imageUrl="/images/pro-visibility.jpg"
+              label="A portrait dissolving into a grid of tiles"
+              className="mx-auto max-w-[440px]"
+            />
           }
         >
           <Lede>
