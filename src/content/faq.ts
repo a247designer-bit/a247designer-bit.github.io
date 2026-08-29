@@ -22,8 +22,6 @@ export const SERVICES_FAQ: FaqItem[] = [
     question: "What is Blookd?",
     answer:
       "Blookd is where you find independent beauty and wellness professionals near you, look at their work, compare what they offer and book directly with them.",
-    icon: "💇",
-    iconPosition: "right",
   },
   {
     id: 2,
@@ -60,8 +58,6 @@ export const SERVICES_FAQ: FaqItem[] = [
     question: "How do I leave a review?",
     answer:
       "Once the appointment is done, open it in your bookings and use the review section there. You can edit or delete a review afterwards from your review history.",
-    icon: "⭐",
-    iconPosition: "left",
   },
   {
     id: 8,
@@ -90,8 +86,6 @@ export const PROFESSIONALS_FAQ: FaqItem[] = [
     question: "What does it cost?",
     answer:
       "No monthly fee. A flat 5%, and only when a client pays you. Every feature is included, there are no setup fees and no long-term contract — full terms are shown before you publish.",
-    icon: "💸",
-    iconPosition: "right",
   },
   {
     id: 3,
@@ -153,8 +147,6 @@ export const WORKSPACES_FAQ: FaqItem[] = [
     question: "How do I book a workspace?",
     answer:
       "Search for the workspace you want, pick a time that works for you, and confirm. Photos, amenities, location and pricing are all on the listing before you commit.",
-    icon: "🪑",
-    iconPosition: "right",
   },
   {
     id: 4,
@@ -207,8 +199,6 @@ export const HOSTS_FAQ: FaqItem[] = [
     question: "What can I list?",
     answer:
       "Anything a beauty or wellness professional can work from: a single chair, a station, a treatment room or a whole studio. One listing per space, with photos, amenities and pricing.",
-    icon: "🔑",
-    iconPosition: "right",
   },
   {
     id: 2,

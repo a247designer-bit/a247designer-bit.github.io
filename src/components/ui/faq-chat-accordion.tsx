@@ -25,8 +25,6 @@ interface FAQItem {
   id: number;
   question: string;
   answer: string;
-  icon?: string;
-  iconPosition?: "left" | "right";
 }
 
 interface FaqAccordionProps {
@@ -71,30 +69,17 @@ export function FaqAccordion({
                 <Accordion.Trigger className="flex w-full items-center justify-start gap-x-4 text-left">
                   <div
                     className={cn(
-                      "relative flex items-center space-x-2 rounded-xl p-2 transition-colors",
+                      // Neither `relative` nor `space-x-2` outlive the emoji
+                      // that used to hang off this chip: one was the
+                      // positioning context for it, the other the gap between
+                      // it and the question. One child is left.
+                      "flex items-center rounded-xl p-2 transition-colors",
                       isOpen
                         ? "bg-primary/20 text-primary"
                         : "bg-muted hover:bg-primary/10",
                       questionClassName,
                     )}
                   >
-                    {item.icon && (
-                      <span
-                        aria-hidden
-                        className={cn(
-                          "absolute bottom-6",
-                          item.iconPosition === "right" ? "right-0" : "left-0",
-                        )}
-                        style={{
-                          transform:
-                            item.iconPosition === "right"
-                              ? "rotate(7deg)"
-                              : "rotate(-4deg)",
-                        }}
-                      >
-                        {item.icon}
-                      </span>
-                    )}
                     <span className="font-medium">{item.question}</span>
                   </div>
 
