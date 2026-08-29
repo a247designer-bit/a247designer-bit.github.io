@@ -56,7 +56,16 @@ export function SocialLinks({ className }: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="inline-flex size-11 items-center justify-center rounded-full text-ink-62 transition-colors hover:text-foreground"
+            // 30px on a phone, half again on the 20 a desktop gets. The size
+            // prop lands on the svg as width/height attributes, which is the
+            // lowest-precedence way to size an element — so a class overrides
+            // it and the mark can be responsive without the component being.
+            //
+            // The box stays 44px either way: it is the tap target, and it was
+            // already the smallest one worth having. What changes is how much
+            // of it the drawing fills, which is why the footer's pull-back
+            // offset changes with it — 7px of padding to reclaim now, not 12.
+            className="inline-flex size-11 items-center justify-center rounded-full text-ink-62 transition-colors hover:text-foreground [&_svg]:size-[30px] md:[&_svg]:size-5"
           >
             <Icon size={20} />
           </a>

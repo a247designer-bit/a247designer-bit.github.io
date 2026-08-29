@@ -41,16 +41,28 @@ const LEGAL = [
  * down the sides — the footer reads as the last object on the page rather than
  * as the page running out.
  *
- * The inset runs on all four sides: the gap on top separates the card from the
- * last band, which rounds its own bottom edge to meet it (see globals.css).
+ * That reading costs 32px of a phone's width, which is more than it is worth
+ * there, so below md the card runs edge to edge and keeps only the gap on top.
+ * The last band rounds its own bottom edge to meet that gap (see globals.css),
+ * and this one rounds its top to answer it.
  */
 export function SiteFooter() {
   return (
-    <div className="relative bg-quiet p-4 md:p-8">
-      <footer className="dark rounded-[var(--radius-band)] bg-paper px-6 py-12 text-foreground md:px-12 md:py-16">
+    // Edge to edge below md. The side inset is what makes the footer read as a
+    // card on a desktop, and on a 375px screen it was 32px of quiet ground
+    // charged against the only column the content has. The gap above it stays
+    // — that is the seam between the last band and this one, and the band
+    // rounds its own bottom edge to meet it. Nothing below it, so nothing
+    // under it either.
+    <div className="relative bg-quiet px-0 pt-4 pb-0 md:p-8">
+      <footer className="dark rounded-t-[var(--radius-band)] bg-paper px-6 py-12 text-foreground md:rounded-[var(--radius-band)] md:px-12 md:py-16">
         <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-14">
-          <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
-            <div className="flex flex-col gap-5">
+          {/* Two columns below md, three from md up. Product runs to four
+              links and Company to one, so stacked they were two headings and
+              five rows spread down most of a screen; side by side they are a
+              directory. The brand block keeps the full width above them. */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-[1.4fr_1fr_1fr] md:gap-12">
+            <div className="col-span-2 flex flex-col gap-5 md:col-span-1">
               <img
                 src="/brand/blookd-logotype-light.svg"
                 alt="Blookd"
@@ -62,10 +74,13 @@ export function SiteFooter() {
               </p>
               {/* Under the mark and the line about who Blookd is, not down in
                   the legal row: these belong with the brand, and the row at the
-                  bottom is for the documents. `-ml-3` pulls the first icon's
-                  44px box back so the drawing lines up with the logotype above
-                  it rather than the padding around it. */}
-              <SocialLinks className="-ml-3" />
+                  bottom is for the documents.
+
+                  The pull-back lines the first drawing up with the logotype
+                  above it rather than the padding around it, so it is however
+                  much padding the box has left over: 7px around a 30px mark on
+                  a phone, 12px around the 20px one above md. */}
+              <SocialLinks className="-ml-[7px] md:-ml-3" />
             </div>
 
             {COLUMNS.map((col) => (
