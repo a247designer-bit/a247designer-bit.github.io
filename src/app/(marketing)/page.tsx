@@ -146,7 +146,7 @@ export default function HomePage() {
               </p>
             </Reveal>
             <Reveal delay={120}>
-              <p className="mx-auto mt-8 max-w-[58ch] text-center text-[17px] leading-[1.6] text-ink-62">
+              <p className="mx-auto mt-8 max-w-[58ch] text-center text-[17px] leading-[1.6] text-white">
                 That&apos;s the Blookd network.
               </p>
             </Reveal>
