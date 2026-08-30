@@ -2,7 +2,7 @@
 
 import { useId, useRef, useState } from "react";
 import { Dialog, VisuallyHidden } from "radix-ui";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 
 import { CtaSecondaryButton } from "@/components/site/cta";
 import { cn } from "@/lib/utils";
@@ -53,6 +53,17 @@ const WAITLIST_ENDPOINT = ["https://formsubmit.co/ajax/", WAITLIST_INBOX].join("
 
 type Status = "idle" | "sending" | "sent" | "error";
 
+/**
+ * Which app the signup is for.
+ *
+ * Two products, one waitlist — without this the list arrives as a single pile
+ * of addresses and nobody can tell who was promised a booking app and who was
+ * promised a place to work. Left unset rather than defaulted to Blookd: a
+ * preselected answer is one nobody reads, and a column where everyone picked
+ * the default is worth no more than no column at all.
+ */
+const APPS = ["Blookd", "Blookd Rental"] as const;
+
 /** Deliberately loose. The only wrong answer here is a rejected real address. */
 const looksLikeEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
 
@@ -60,8 +71,10 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [app, setApp] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const appId = useId();
   const nameId = useId();
   const emailId = useId();
   const noticeId = useId();
@@ -73,6 +86,7 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
   function reset() {
     setName("");
     setEmail("");
+    setApp("");
     setStatus("idle");
     setError(null);
   }
@@ -84,6 +98,11 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
 
+    if (!app) {
+      setError("Choose which app you're signing up for.");
+      setStatus("error");
+      return;
+    }
     if (!trimmedName) {
       setError("Tell us what to call you.");
       setStatus("error");
@@ -113,7 +132,10 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
         body: JSON.stringify({
           name: trimmedName,
           email: trimmedEmail,
-          _subject: `Blookd waitlist — ${trimmedName}`,
+          app,
+          // The app rides in the subject as well as the body: the inbox sorts
+          // on subject lines long before anyone opens the table.
+          _subject: `${app} waitlist — ${trimmedName}`,
           // FormSubmit otherwise interrupts with its own captcha page, which an
           // ajax POST cannot show and the visitor would only see as a failure.
           _captcha: "false",
@@ -203,7 +225,8 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
                   You&apos;re on the list.
                 </p>
                 <p className="mt-2 text-[15px] leading-[1.5] text-black/55">
-                  We&apos;ll email {email.trim()} the moment early access opens.
+                  We&apos;ll email {email.trim()} the moment early access to{" "}
+                  {app} opens.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Dialog.Close className="inline-flex min-h-11 items-center rounded-[10px] bg-[#111] px-5 text-[15px] font-medium text-white transition-opacity hover:opacity-90">
@@ -234,6 +257,17 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
                   autoComplete="off"
                   aria-hidden
                   className="absolute left-[-9999px] size-px opacity-0"
+                />
+                <SelectField
+                  id={appId}
+                  label="Choose app"
+                  placeholder="Choose app"
+                  options={APPS}
+                  value={app}
+                  onChange={setApp}
+                  disabled={sending}
+                  invalid={status === "error" && !app}
+                  describedBy={status === "error" ? noticeId : undefined}
                 />
                 <Field
                   id={nameId}
@@ -297,12 +331,93 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
 
           <VisuallyHidden.Root>
             <Dialog.Description>
-              Join the Blookd waitlist with your first name and email address.
+              Join the waitlist for Blookd or Blookd Rental with your first
+              name and email address.
             </Dialog.Description>
           </VisuallyHidden.Root>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+/**
+ * The same field, holding a choice instead of a line of text.
+ *
+ * A native `<select>` rather than a listbox built out of divs: this sheet is
+ * anchored to the bottom of the viewport because it is mostly read on a phone,
+ * and on a phone the native control is a full-height wheel the thumb already
+ * knows. Stripped of its own chrome so it sits in the same filled shape as the
+ * two fields under it, with the chevron drawn back on top.
+ */
+function SelectField({
+  id,
+  label,
+  placeholder,
+  options,
+  value,
+  onChange,
+  disabled,
+  invalid,
+  describedBy,
+}: {
+  id: string;
+  label: string;
+  placeholder: string;
+  options: readonly string[];
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+}) {
+  return (
+    <div className="mb-5">
+      <label htmlFor={id} className="block text-[15px] text-black/45">
+        {label}
+      </label>
+      <div className="relative mt-2">
+        <select
+          id={id}
+          value={value}
+          disabled={disabled}
+          aria-invalid={invalid || undefined}
+          aria-describedby={describedBy}
+          onChange={(event) => onChange(event.target.value)}
+          className={cn(
+            "h-14 w-full appearance-none rounded-[14px] bg-black/[0.05] pr-12 pl-4 text-[17px] outline-none",
+            "focus-visible:ring-2 focus-visible:ring-[#111]/30",
+            "disabled:opacity-60",
+            // The empty state is the placeholder, so it takes the placeholder's
+            // grey — a `<select>` has no `::placeholder` to hand that to.
+            value ? "text-[#111]" : "text-black/40",
+            invalid && "ring-2 ring-[#c0341a]/50",
+          )}
+        >
+          {/* `hidden`, so the list offers the two apps and nothing else — the
+              label above the field already says Choose app, and repeating it as
+              a row made the menu read as three options where there are two. It
+              stays as the closed field's text, and its empty value still fails
+              the check above, so the choice is still one somebody has to make.
+
+              Not `disabled` as well: a browser that ignores `hidden` would then
+              draw the row greyed instead of not drawing it, which is the thing
+              this is removing. */}
+          <option value="" hidden>
+            {placeholder}
+          </option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        <ChevronDown
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-black/40"
+        />
+      </div>
+    </div>
   );
 }
 
