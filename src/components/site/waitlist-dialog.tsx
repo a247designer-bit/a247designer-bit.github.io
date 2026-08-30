@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { ChevronDown, X } from "lucide-react";
 
@@ -261,7 +261,6 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
                 <SelectField
                   id={appId}
                   label="Choose app"
-                  placeholder="Choose app"
                   options={APPS}
                   value={app}
                   onChange={setApp}
@@ -353,7 +352,6 @@ export function WaitlistDialog({ label = "Join the waitlist" }: { label?: string
 function SelectField({
   id,
   label,
-  placeholder,
   options,
   value,
   onChange,
@@ -363,7 +361,6 @@ function SelectField({
 }: {
   id: string;
   label: string;
-  placeholder: string;
   options: readonly string[];
   value: string;
   onChange: (value: string) => void;
@@ -371,6 +368,23 @@ function SelectField({
   invalid?: boolean;
   describedBy?: string;
 }) {
+  const ref = useRef<HTMLSelectElement>(null);
+
+  // A `<select>` holding no option that matches an empty value does not sit
+  // empty — it lands on its first one, so the control shows "Blookd" and hands
+  // the accessibility tree the same, for a choice nobody made. -1 is the state
+  // that means nothing is chosen and there is no value that expresses it, so
+  // it has to be written onto the element itself.
+  //
+  // Deliberately no dependency array. React restores the selection on every
+  // render it touches this element on, not only on the ones where `value`
+  // changed — the submit that reports the field empty is itself such a render,
+  // which is how an unanswered field came to read "Blookd" the moment it was
+  // complained about.
+  useEffect(() => {
+    if (!value && ref.current) ref.current.selectedIndex = -1;
+  });
+
   return (
     <div className="mb-5">
       <label htmlFor={id} className="block text-[15px] text-black/45">
@@ -378,6 +392,7 @@ function SelectField({
       </label>
       <div className="relative mt-2">
         <select
+          ref={ref}
           id={id}
           value={value}
           disabled={disabled}
@@ -385,33 +400,32 @@ function SelectField({
           aria-describedby={describedBy}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
-            "h-14 w-full appearance-none rounded-[14px] bg-black/[0.05] pr-12 pl-4 text-[17px] outline-none",
+            "h-14 w-full appearance-none rounded-[14px] bg-black/[0.05] pr-12 pl-4 text-[17px] text-[#111] outline-none",
             "focus-visible:ring-2 focus-visible:ring-[#111]/30",
             "disabled:opacity-60",
-            // The empty state is the placeholder, so it takes the placeholder's
-            // grey — a `<select>` has no `::placeholder` to hand that to.
-            value ? "text-[#111]" : "text-black/40",
             invalid && "ring-2 ring-[#c0341a]/50",
           )}
         >
-          {/* `hidden`, so the list offers the two apps and nothing else — the
-              label above the field already says Choose app, and repeating it as
-              a row made the menu read as three options where there are two. It
-              stays as the closed field's text, and its empty value still fails
-              the check above, so the choice is still one somebody has to make.
+          {/* The two apps and nothing else. There is deliberately no empty
+              option standing in for the placeholder: `hidden` on one is
+              advisory, and iOS Safari builds its wheel from every option in
+              the list regardless — which is how "Choose app" kept turning up
+              as a third thing to pick on a phone while desktop showed two.
 
-              Not `disabled` as well: a browser that ignores `hidden` would then
-              draw the row greyed instead of not drawing it, which is the thing
-              this is removing. */}
-          <option value="" hidden>
-            {placeholder}
-          </option>
+              With no option matching an empty value the control simply has
+              nothing selected, so the field sits empty until someone chooses
+              and the check in handleSubmit still sees an unanswered field. */}
           {options.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
           ))}
         </select>
+
+        {/* Nothing stands in for an unmade choice. The label above the field
+            already says Choose app, and a `<select>` is the one control whose
+            emptiness is unambiguous — the chevron says it opens, and there is
+            no value in it to mistake for one. */}
         <ChevronDown
           aria-hidden
           className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-black/40"
