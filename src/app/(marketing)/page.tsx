@@ -489,12 +489,16 @@ export default function HomePage() {
           <div className="grid gap-6 lg:grid-cols-2">
             {[
               {
-                name: "Blookd",
+                // Two names on one card, because the left half of the network
+                // ships as two builds off the same mark — the client app and
+                // the pro app. The audience line underneath already said as
+                // much; the title was still naming only one of them.
+                name: "Blookd/Blookd BIZ",
                 audience: "For clients & professionals",
                 body: "Discover talent. Get discovered. Book services. Build relationships.",
                 cta: "Get Blookd",
                 href: "/services",
-                image: "/images/app-card-blookd-2.jpg",
+                image: "/images/app-card-blookd-3.jpg",
               },
               {
                 name: "Blookd Rental",
