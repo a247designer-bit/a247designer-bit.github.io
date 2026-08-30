@@ -255,7 +255,11 @@ export function AppShowcase({
                     "transition-[filter] duration-700",
                     // See .showcase-glow in globals.css: it reads the accent
                     // rather than naming a colour, so the halo follows whichever
-                    // brand this walkthrough is running on.
+                    // brand this walkthrough is running on. The rest class is
+                    // what it transitions FROM — the same accent at no
+                    // strength, so the halo never passes through grey on its
+                    // way in or out.
+                    "showcase-glow-rest",
                     i === active && "showcase-glow",
                   )}
                 >

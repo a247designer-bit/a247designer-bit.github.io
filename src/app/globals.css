@@ -310,6 +310,27 @@
      paint that filter on every step at once rather than on one, and the halo
      is there to say which step is being read. On a phone the column shows the
      steps one at a time anyway, so nothing is lost by dropping it. */
+  /* The resting state is a drawn halo at zero strength, not `filter: none`.
+
+     A halo fading in out of `none` — or out of `transparent`, which is the
+     same thing — starts from a colour that is transparent BLACK. The alpha
+     climbs faster than the eye needs, so the first third of the 700ms shows a
+     grey shadow that only then turns accent: the halo appeared to arrive in
+     the wrong colour and correct itself. Naming the accent at ~zero alpha
+     instead pins the colour for the whole travel and leaves only the alpha and
+     the blur to move.
+
+     0.0001% rather than 0% because a color-mix that keeps none of a colour
+     keeps none of its coordinates either, and resolves back to the same
+     transparent black this is here to avoid. One part in a million is
+     invisible and carries the full accent. The blur rests at 0, so no card is
+     paying for a gaussian it cannot show. */
+  .showcase-glow-rest {
+    filter: drop-shadow(
+      0 0 0 color-mix(in oklab, var(--primary) 0.0001%, transparent)
+    );
+  }
+
   .showcase-glow {
     filter: drop-shadow(
       0 0 40px color-mix(in oklab, var(--primary) 55%, transparent)
@@ -317,6 +338,7 @@
   }
 
   @media (max-width: 767px) {
+    .showcase-glow-rest,
     .showcase-glow {
       filter: none;
     }
