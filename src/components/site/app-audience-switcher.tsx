@@ -147,14 +147,32 @@ const ICONS = [
  * thing twice over an already busy band. Which phone is being talked about is
  * still legible from its scale and from the blur on the other one.
  */
-const PHONES = [
+type Phone = {
+  key: "blookd" | "rental";
+  src: string;
+  alt: string;
+  /** States where this slot shows a different build of the same app. */
+  byAudience?: Partial<Record<AudienceId, { src: string; alt: string }>>;
+};
+
+const PHONES: Phone[] = [
   {
-    key: "blookd" as const,
+    key: "blookd",
     src: "/images/app-phone-blookd-2.png",
     alt: "The Blookd app showing top rated providers near you",
+    // The chips already say a pro carries Blookd Biz rather than Blookd, and
+    // this slot was still holding up the client app underneath them — the one
+    // screen on the stage that belongs to somebody else. Same orange mark,
+    // same left position, different build: what changes is the screen.
+    byAudience: {
+      professionals: {
+        src: "/images/app-phone-biz.png",
+        alt: "The Blookd Biz app showing a pro's next appointment and the day's schedule",
+      },
+    },
   },
   {
-    key: "rental" as const,
+    key: "rental",
     src: "/images/app-phone-rental-2.png",
     alt: "The Blookd Rental app showing workspaces available in Denver",
   },
@@ -299,6 +317,7 @@ export function AppAudienceSwitcher() {
       >
         {PHONES.map((phone) => {
           const place = PHONE_PLACEMENT[active][phone.key];
+          const shot = phone.byAudience?.[active] ?? phone;
           return (
             <div
               key={phone.key}
@@ -330,8 +349,8 @@ export function AppAudienceSwitcher() {
                   The cast shadow stays: it is what sets the mockup on the band
                   rather than lighting it, and without it the phone floats. */}
               <Image
-                src={phone.src}
-                alt={place.lifted ? phone.alt : ""}
+                src={shot.src}
+                alt={place.lifted ? shot.alt : ""}
                 width={886}
                 height={1812}
                 className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
