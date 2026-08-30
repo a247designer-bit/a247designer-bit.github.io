@@ -192,17 +192,19 @@ export default function ProfessionalsPage() {
           heading="Build your work on your terms."
           media={
             <div className="overflow-hidden rounded-[28px]">
-              {/* The same shot the home page's Blookd card carries, rather than
-                  a second copy of it under its own name — one file, and the two
-                  places that show the app show the same app.
+              {/* Blookd Biz, not Blookd. This shot used to be the one the home
+                  page's client card carries — a page addressed to pros closing
+                  on a picture of the app their clients hold. The pro app runs
+                  both of its own screens here instead: the day ahead as a list
+                  and as a calendar.
 
                   Declared square because it IS square. The portrait 1200x1400
-                  this replaces set the frame's aspect, and keeping it would
-                  have cropped 14% off a composition where the phone already
-                  runs top to bottom. */}
+                  that preceded both set the frame's aspect, and keeping it
+                  would have cropped 14% off a composition where the phones
+                  already run top to bottom. */}
               <Image
-                src="/images/app-card-blookd-2.jpg"
-                alt="The Blookd app open on a phone, showing top rated providers nearby"
+                src="/images/app-card-biz-2screen.jpg"
+                alt="The Blookd Biz app on two phones, showing a pro's day as a list and as a calendar"
                 width={1254}
                 height={1254}
                 className="h-full w-full object-cover"
