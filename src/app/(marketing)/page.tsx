@@ -399,9 +399,13 @@ export default function HomePage() {
           <Reveal className="flex max-w-[46ch] flex-col items-start gap-6">
             <h2 id="human" className="text-display-2">
               Real{" "}
+              {/* The word that changes is the only one worth reading twice,
+                  so it carries the accent and "Real" stays ink. `text-primary`
+                  rather than a fixed orange: it follows the band's own tone. */}
               <AnimatedTextCycle
                 words={["people", "talent", "places"]}
                 interval={2400}
+                className="text-primary"
               />
             </h2>
             <Lede>
