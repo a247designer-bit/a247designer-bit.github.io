@@ -39,18 +39,34 @@ export function AppBadgeButton({
     <Link
       href={href}
       className={cn(
-        // 12px, not a full pill. At `rounded-full` the badge had no corner of
-        // its own and read as a lozenge stuck to the page; a soft rectangle
+        // 18px: the mark's own 10px corner plus the 8px of padding around it.
+        // Nested corners only look like one object when they share a centre,
+        // and at 12px this badge turned tighter than the icon 8px inside it —
+        // the outer corner cutting in front of the inner one, which is what
+        // made the mark read as pressed into the left edge.
+        //
+        // Still not a full pill: that would be 28px at this height, and at
+        // `rounded-full` the badge had no corner of its own and read as a
+        // lozenge stuck to the page. 18px leaves 20px of straight edge and
         // sits in the same family as the cards and bands it floats over.
         // `overflow-hidden` means the hover sweep is clipped to this radius
         // too, so the light turns the same corners the badge does.
-        "group relative isolate flex items-center gap-3 overflow-hidden rounded-[12px]",
+        "group relative isolate flex items-center gap-3 overflow-hidden rounded-[18px]",
         // Ink rather than the brand orange or the reference's indigo: this
         // badge carries a different app on different pages — Blookd's orange
         // mark on two, Rental's indigo on the other two — and a neutral ground
         // is the only one all three sit on without arguing. It also matches
         // CtaSecondary, so the site already owns this colour.
-        "bg-linear-to-b from-[#2e2e2e] to-ink p-2 pr-4",
+        // 10px on the left against 8px top and bottom — an optical
+        // compensation, not an arithmetic one. The mark is a squircle: only
+        // the middle 20px of its left edge is actually flat and the corners
+        // fall away from the badge's edge, so a measured 8px reads tighter
+        // there than the same 8px reads above and below a flat run. Two
+        // pixels back is what makes the four sides look equal.
+        //
+        // Written out rather than left to `p-2` plus an override, so the one
+        // side that differs from the rest says so where it is set.
+        "bg-linear-to-b from-[#2e2e2e] to-ink py-2 pr-4 pl-2.5",
         "ring-1 ring-inset ring-white/10",
         "shadow-[0_2px_20px_rgba(26,26,26,0.18)]",
         "transition-[transform,box-shadow] duration-500 ease-[var(--ease-out)]",
